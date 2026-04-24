@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Group Savings & Loan — Cloud</title>
+<style>
+  :root{--primary:#2563eb;--primary-dark:#1d4ed8;--success:#16a34a;--danger:#dc2626;--warning:#d97706;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--border:#e5e7eb;--sidebar:#0f172a;--sidebar-hover:#1e293b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#2563eb,#7c3aed);padding:20px;}
+  .login-card{background:#fff;border-radius:14px;padding:40px;width:100%;max-width:440px;box-shadow:0 20px 40px rgba(0,0,0,.15);}
+  .login-card h1{font-size:26px;margin-bottom:6px;color:var(--primary);}
+  .login-card .sub{color:var(--muted);margin-bottom:24px;font-size:14px;}
+  .login-card label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;margin-top:14px;}
+  .login-card input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:15px;}
+  .login-card input:focus{outline:none;border-color:var(--primary);}
+  .login-card button{width:100%;margin-top:20px;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;}
+  .login-card button:hover{background:var(--primary-dark);}
+  .login-card .link{display:block;text-align:center;margin-top:12px;color:var(--primary);font-size:13px;cursor:pointer;text-decoration:underline;}
+  .err{background:#fee2e2;color:#991b1b;padding:10px;border-radius:8px;margin-top:14px;font-size:13px;}
+  .warn-box{background:#fef3c7;color:#92400e;padding:14px;border-radius:8px;margin-top:14px;font-size:13px;border:1px solid #fbbf24;}
+  .app{display:none;min-height:100vh;}
+  .app.active{display:flex;}
+  .sidebar{width:240px;background:var(--sidebar);color:#cbd5e1;padding:20px 0;flex-shrink:0;min-height:100vh;}
+  .brand{padding:0 20px 20px;border-bottom:1px solid #1e293b;}
+  .brand h2{color:#fff;font-size:18px;}
+  .brand .role{font-size:11px;color:#64748b;margin-top:3px;text-transform:uppercase;letter-spacing:1px;}
+  .nav{padding:20px 0;}
+  .nav a{display:block;padding:11px 20px;color:#cbd5e1;text-decoration:none;font-size:14px;cursor:pointer;border-left:3px solid transparent;}
+  .nav a:hover{background:var(--sidebar-hover);color:#fff;}
+  .nav a.active{background:var(--sidebar-hover);color:#fff;border-left-color:var(--primary);}
+  .logout{margin:20px;padding:10px;background:#dc2626;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;width:calc(100% - 40px);}
+  .main{flex:1;padding:28px;overflow-x:auto;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+  .topbar h1{font-size:22px;}
+  .welcome{color:var(--muted);font-size:13px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px;}
+  .stat{background:var(--card);border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.05);border-left:4px solid var(--primary);}
+  .stat.success{border-left-color:var(--success);}
+  .stat.warning{border-left-color:var(--warning);}
+  .stat.danger{border-left-color:var(--danger);}
+  .stat .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+  .stat .value{font-size:24px;font-weight:700;}
+  .card{background:var(--card);border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+  .card h3{font-size:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);}
+  th{background:#f9fafb;font-weight:600;font-size:12px;color:var(--muted);text-transform:uppercase;}
+  tr:hover td{background:#fafafa;}
+  .btn{padding:8px 14px;border:none;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500;}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-success{background:var(--success);color:#fff;}
+  .btn-danger{background:var(--danger);color:#fff;}
+  .btn-warning{background:var(--warning);color:#fff;}
+  .btn-secondary{background:#e5e7eb;color:#111;}
+  .btn-sm{padding:5px 10px;font-size:12px;}
+  .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px;}
+  .form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:var(--muted);}
+  .form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);}
+  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase;}
+  .badge-success{background:#dcfce7;color:#166534;}
+  .badge-warning{background:#fef3c7;color:#92400e;}
+  .badge-danger{background:#fee2e2;color:#991b1b;}
+  .badge-info{background:#dbeafe;color:#1e40af;}
+  .badge-muted{background:#f3f4f6;color:#6b7280;}
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:20px;}
+  .modal-bg.active{display:flex;}
+  .modal{background:#fff;border-radius:12px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+  .modal h3{margin-bottom:16px;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+  .toast{position:fixed;top:20px;right:20px;padding:12px 18px;border-radius:8px;color:#fff;font-size:14px;z-index:200;box-shadow:0 5px 15px rgba(0,0,0,.2);display:none;}
+  .toast.active{display:block;}
+  .page{display:none;}
+  .page.active{display:block;}
+  .empty{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
+  .loader{display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:16px;color:var(--muted);}
+  .setup-screen{max-width:720px;margin:40px auto;padding:30px;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08);}
+  .setup-screen h1{color:var(--primary);margin-bottom:10px;}
+  .setup-screen pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;overflow-x:auto;font-size:12px;margin:12px 0;}
+  .setup-screen ol{margin-left:20px;line-height:1.9;}
+  .setup-screen code{background:#e5e7eb;padding:2px 6px;border-radius:4px;font-size:13px;}
+  @media(max-width:768px){.app.active{flex-direction:column;}.sidebar{width:100%;min-height:auto;}.main{padding:16px;}}
+</style>
+</head>
+<body>
+
+<div id="bootLoader" class="loader">Loading…</div>
+
+<div id="setupScreen" class="setup-screen" style="display:none;">
+  <h1>⚙️ Firebase Setup Required</h1>
+  <p>This app needs a Firebase project to store data. Follow the 10-minute setup in the instructions I sent you, then paste your config below into the HTML file.</p>
+  <p style="margin-top:14px;">The placeholder config is currently at the top of the <code>&lt;script&gt;</code> block. Replace <b>all six values</b> with the ones from your Firebase console.</p>
+</div>
+
+<div id="loginPage" class="login-wrap" style="display:none;">
+  <div class="login-card">
+    <h1>💰 Group Savings & Loan</h1>
+    <p class="sub">Monthly collection & loan management</p>
+    <form id="loginForm">
+      <label>Email</label>
+      <input type="email" id="loginEmail" required autocomplete="username" />
+      <label>Password</label>
+      <input type="password" id="loginPass" required autocomplete="current-password" />
+      <button type="submit">Sign In</button>
+    </form>
+    <a class="link" id="forgotLink">Forgot password?</a>
+    <div id="loginErr"></div>
+  </div>
+</div>
+
+<div id="adminApp" class="app">
+  <aside class="sidebar">
+    <div class="brand"><h2>💰 Savings & Loan</h2><div class="role">Admin Panel</div></div>
+    <nav class="nav">
+      <a data-page="admin-dashboard" class="active">📊 Dashboard</a>
+      <a data-page="admin-members">👥 Members</a>
+      <a data-page="admin-contributions">💵 Contributions</a>
+      <a data-page="admin-loans">🏦 Loans</a>
+      <a data-page="admin-requests">📝 Loan Requests</a>
+      <a data-page="admin-settings">⚙️ Settings</a>
+    </nav>
+    <button class="logout" id="adminLogout">Logout</button>
+  </aside>
+  <main class="main">
+    <div class="topbar"><h1 id="adminPageTitle">Dashboard</h1><div class="welcome">Welcome, <b id="adminName"></b></div></div>
+    <div id="admin-dashboard" class="page active">
+      <div class="grid" id="adminStats"></div>
+      <div class="card"><h3>Recent Contributions</h3><div id="recentContribs"></div></div>
+      <div class="card"><h3>Active Loans Summary</h3><div id="activeLoansSummary"></div></div>
+    </div>
+    <div id="admin-members" class="page">
+      <div class="card"><h3>All Members <button class="btn btn-primary" id="addMemberBtn">+ Add Member</button></h3><div id="membersList"></div></div>
+    </div>
+    <div id="admin-contributions" class="page">
+      <div class="card">
+        <h3>Record Contribution</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Member</label><select id="contribMember"></select></div>
+          <div class="form-group"><label>Month</label><select id="contribMonth"></select></div>
+          <div class="form-group"><label>Year</label><input type="number" id="contribYear" /></div>
+          <div class="form-group"><label>Amount (₹)</label><input type="number" id="contribAmount" /></div>
+        </div>
+        <div class="form-group"><label>Notes (optional)</label><input type="text" id="contribNotes" /></div>
+        <button class="btn btn-success" id="recordContribBtn">Record Contribution</button>
+      </div>
+      <div class="card"><h3>All Contributions</h3><div id="allContribs"></div></div>
+    </div>
+    <div id="admin-loans" class="page">
+      <div class="card">
+        <h3>Issue New Loan</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Member</label><select id="loanMember"></select></div>
+          <div class="form-group"><label>Principal (₹)</label><input type="number" id="loanPrincipal" /></div>
+          <div class="form-group"><label>Issue Date</label><input type="date" id="loanDate" /></div>
+        </div>
+        <div class="form-group"><label>Notes</label><input type="text" id="loanNotes" placeholder="Purpose of loan" /></div>
+        <button class="btn btn-success" id="issueLoanBtn">Issue Loan</button>
+      </div>
+      <div class="card"><h3>All Loans</h3><div id="allLoans"></div></div>
+    </div>
+    <div id="admin-requests" class="page">
+      <div class="card"><h3>Pending Loan Requests</h3><div id="pendingRequests"></div></div>
+      <div class="card"><h3>Processed Requests</h3><div id="processedRequests"></div></div>
+    </div>
+    <div id="admin-settings" class="page">
+      <div class="card">
+        <h3>System Settings</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Default Monthly Contribution (₹)</label><input type="number" id="setMonthly" /></div>
+          <div class="form-group"><label>Interest Rate (% per month)</label><input type="number" step="0.1" id="setInterest" /></div>
+          <div class="form-group"><label>Group Name</label><input type="text" id="setGroupName" /></div>
+        </div>
+        <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+      </div>
+      <div class="card">
+        <h3>Data Backup</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:12px;">Download all current data as JSON for safekeeping.</p>
+        <button class="btn btn-secondary" id="exportBtn">📥 Export All Data</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="userApp" class="app">
+  <aside class="sidebar">
+    <div class="brand"><h2>💰 Savings & Loan</h2><div class="role">Member Portal</div></div>
+    <nav class="nav">
+      <a data-page="user-dashboard" class="active">📊 Dashboard</a>
+      <a data-page="user-contribs">💵 My Contributions</a>
+      <a data-page="user-loans">🏦 My Loans</a>
+      <a data-page="user-request">📝 Request Loan</a>
+      <a data-page="user-account">⚙️ Account</a>
+    </nav>
+    <button class="logout" id="userLogout">Logout</button>
+  </aside>
+  <main class="main">
+    <div class="topbar"><h1 id="userPageTitle">Dashboard</h1><div class="welcome">Welcome, <b id="userName"></b></div></div>
+    <div id="user-dashboard" class="page active">
+      <div class="grid" id="userStats"></div>
+      <div class="card"><h3>My Active Loan</h3><div id="userActiveLoan"></div></div>
+      <div class="card"><h3>Recent Activity</h3><div id="userRecentActivity"></div></div>
+    </div>
+    <div id="user-contribs" class="page"><div class="card"><h3>My Contribution History</h3><div id="userContribs"></div></div></div>
+    <div id="user-loans" class="page"><div class="card"><h3>My Loans & Repayment Schedule</h3><div id="userLoans"></div></div></div>
+    <div id="user-request" class="page">
+      <div class="card">
+        <h3>Request a New Loan</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">Submit a loan request. Admin will review and approve.</p>
+        <div class="form-row"><div class="form-group"><label>Amount (₹)</label><input type="number" id="reqAmount" /></div></div>
+        <div class="form-group"><label>Reason / Purpose</label><textarea id="reqReason" rows="3"></textarea></div>
+        <button class="btn btn-primary" id="submitReqBtn">Submit Request</button>
+      </div>
+      <div class="card"><h3>My Previous Requests</h3><div id="userRequests"></div></div>
+    </div>
+    <div id="user-account" class="page">
+      <div class="card"><h3>My Profile</h3><div id="userProfile"></div></div>
+      <div class="card">
+        <h3>Send Me a Password Reset Link</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:12px;">Firebase will email you a secure link to reset your password.</p>
+        <button class="btn btn-warning" id="userResetBtn">Send Reset Email</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="modal" class="modal-bg"><div class="modal" id="modalContent"></div></div>
+<div id="toast" class="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* =================================================================
+   PASTE YOUR FIREBASE CONFIG HERE
+   Get it from: Firebase Console → Project Settings → Your apps → Web
+   ================================================================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyAt6BCsUAbiBTklSiFyVaOxmojqMy-4ZeQ",
+  authDomain: "abhilash-52bee.firebaseapp.com",
+  projectId: "abhilash-52bee",
+  storageBucket: "abhilash-52bee.firebasestorage.app",
+  messagingSenderId: "993199610268",
+  appId: "1:993199610268:web:44f1b6fc67d0ed67869059"
+};
+
+/* ============== BOOT / SETUP CHECK ============== */
+if (firebaseConfig.apiKey.startsWith("PASTE")) {
+  document.getElementById('bootLoader').style.display = 'none';
+  document.getElementById('setupScreen').style.display = 'block';
+  throw new Error('Firebase not configured');
+}
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const fs = getFirestore(app);
+const secondaryApp = initializeApp(firebaseConfig, 'Secondary');
+const secondaryAuth = getAuth(secondaryApp);
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+let currentUser = null;
+let cache = { users:[], contributions:[], loans:[], loanRequests:[], settings:{monthlyAmount:1000,interestRate:0.5,groupName:'Our Savings Group'} };
+
+function fmt(n){ return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2}); }
+function fmtDate(d){ if(!d) return '—'; return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background=type==='error'?'var(--danger)':type==='warn'?'var(--warning)':'var(--success)';
+  t.classList.add('active');
+  setTimeout(()=>t.classList.remove('active'),2800);
+}
+function openModal(html){ document.getElementById('modalContent').innerHTML=html; document.getElementById('modal').classList.add('active'); }
+function closeModal(){ document.getElementById('modal').classList.remove('active'); }
+window.closeModal = closeModal;
+
+/* ============== DATA LOADING ============== */
+async function refreshData(){
+  try {
+    const [usersSnap,contribsSnap,loansSnap,reqsSnap,settingsSnap]=await Promise.all([
+      getDocs(collection(fs,'users')),
+      getDocs(collection(fs,'contributions')),
+      getDocs(collection(fs,'loans')),
+      getDocs(collection(fs,'loanRequests')),
+      getDoc(doc(fs,'settings','main'))
+    ]);
+    cache.users=usersSnap.docs.map(d=>({id:d.id,...d.data()}));
+    cache.contributions=contribsSnap.docs.map(d=>({id:d.id,...d.data()}));
+    cache.loans=loansSnap.docs.map(d=>({id:d.id,...d.data()}));
+    cache.loanRequests=reqsSnap.docs.map(d=>({id:d.id,...d.data()}));
+    if(settingsSnap.exists()) cache.settings={...cache.settings,...settingsSnap.data()};
+  } catch(e){
+    console.error(e); toast('Failed to load data: '+e.message,'error');
+  }
+}
+
+/* ============== AUTH FLOW ============== */
+onAuthStateChanged(auth, async firebaseUser => {
+  document.getElementById('bootLoader').style.display='none';
+  if (!firebaseUser){
+    showLogin();
+    return;
+  }
+  // Fetch user profile doc
+  const uDoc = await getDoc(doc(fs,'users',firebaseUser.uid));
+  if (!uDoc.exists()){
+    await signOut(auth);
+    showLogin('Your account is not set up yet. Contact admin.');
+    return;
+  }
+  currentUser = { id:firebaseUser.uid, email:firebaseUser.email, ...uDoc.data() };
+  await refreshData();
+  enterApp();
+});
+
+function showLogin(err){
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('adminApp').classList.remove('active');
+  document.getElementById('userApp').classList.remove('active');
+  if(err) document.getElementById('loginErr').innerHTML='<div class="err">'+err+'</div>';
+}
+
+document.getElementById('loginForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const email=document.getElementById('loginEmail').value.trim();
+  const pwd=document.getElementById('loginPass').value;
+  try{
+    await signInWithEmailAndPassword(auth,email,pwd);
+    document.getElementById('loginErr').innerHTML='';
+  }catch(err){
+    document.getElementById('loginErr').innerHTML='<div class="err">Invalid email or password.</div>';
+  }
+});
+
+document.getElementById('forgotLink').addEventListener('click', async ()=>{
+  const email=document.getElementById('loginEmail').value.trim();
+  if(!email){ toast('Enter your email first, then click forgot password','warn'); return; }
+  try{ await sendPasswordResetEmail(auth,email); toast('Password reset email sent'); }
+  catch(e){ toast('Error: '+e.message,'error'); }
+});
+
+document.getElementById('adminLogout').addEventListener('click',()=>signOut(auth));
+document.getElementById('userLogout').addEventListener('click',()=>signOut(auth));
+
+function enterApp(){
+  document.getElementById('loginPage').style.display='none';
+  if(currentUser.role==='admin'){
+    document.getElementById('adminApp').classList.add('active');
+    document.getElementById('userApp').classList.remove('active');
+    document.getElementById('adminName').textContent=currentUser.name;
+    showAdminPage('admin-dashboard');
+  } else {
+    document.getElementById('userApp').classList.add('active');
+    document.getElementById('adminApp').classList.remove('active');
+    document.getElementById('userName').textContent=currentUser.name;
+    showUserPage('user-dashboard');
+  }
+}
+
+/* ============== NAV ============== */
+document.querySelectorAll('#adminApp .nav a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.querySelectorAll('#adminApp .nav a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active'); showAdminPage(a.dataset.page);
+  });
+});
+document.querySelectorAll('#userApp .nav a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.querySelectorAll('#userApp .nav a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active'); showUserPage(a.dataset.page);
+  });
+});
+async function showAdminPage(id){
+  document.querySelectorAll('#adminApp .page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const titles={'admin-dashboard':'Dashboard','admin-members':'Members','admin-contributions':'Contributions','admin-loans':'Loans','admin-requests':'Loan Requests','admin-settings':'Settings'};
+  document.getElementById('adminPageTitle').textContent=titles[id];
+  await refreshData();
+  if(id==='admin-dashboard') renderAdminDashboard();
+  if(id==='admin-members') renderMembers();
+  if(id==='admin-contributions') renderContribsPage();
+  if(id==='admin-loans') renderLoansPage();
+  if(id==='admin-requests') renderRequestsPage();
+  if(id==='admin-settings') renderSettings();
+}
+async function showUserPage(id){
+  document.querySelectorAll('#userApp .page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const titles={'user-dashboard':'Dashboard','user-contribs':'My Contributions','user-loans':'My Loans','user-request':'Request Loan','user-account':'Account'};
+  document.getElementById('userPageTitle').textContent=titles[id];
+  await refreshData();
+  if(id==='user-dashboard') renderUserDashboard();
+  if(id==='user-contribs') renderUserContribs();
+  if(id==='user-loans') renderUserLoans();
+  if(id==='user-request') renderUserRequests();
+  if(id==='user-account') renderUserAccount();
+}
+
+/* ============== CALCULATIONS ============== */
+function monthsElapsed(fromDate){
+  const now=new Date(); const from=new Date(fromDate);
+  let m=(now.getFullYear()-from.getFullYear())*12+(now.getMonth()-from.getMonth());
+  if(now.getDate()>=from.getDate()) m+=1;
+  return Math.max(1,m);
+}
+function loanStatus(loan){
+  const reps=loan.repayments||[];
+  const paid=reps.reduce((s,r)=>s+Number(r.amount),0);
+  const months=monthsElapsed(loan.issueDate);
+  const rate=cache.settings.interestRate/100;
+  const interest=loan.principal*rate*months;
+  const total=loan.principal+interest;
+  const outstanding=Math.max(0,total-paid);
+  return {paid,months,interest,total,outstanding,closed:outstanding<=0};
+}
+function cashAvailable(){
+  const contribs=cache.contributions.reduce((s,c)=>s+Number(c.amount),0);
+  const loansOut=cache.loans.reduce((s,l)=>s+Number(l.principal),0);
+  const repaid=cache.loans.reduce((s,l)=>s+(l.repayments||[]).reduce((a,r)=>a+Number(r.amount),0),0);
+  return contribs-loansOut+repaid;
+}
+
+/* ============== ADMIN DASHBOARD ============== */
+function renderAdminDashboard(){
+  const members=cache.users.filter(u=>u.role==='member');
+  const totalContribs=cache.contributions.reduce((s,c)=>s+Number(c.amount),0);
+  const activeLoans=cache.loans.filter(l=>!loanStatus(l).closed);
+  const outstanding=activeLoans.reduce((s,l)=>s+loanStatus(l).outstanding,0);
+  const interestEarned=cache.loans.reduce((s,l)=>s+loanStatus(l).interest,0);
+  const cash=cashAvailable();
+  document.getElementById('adminStats').innerHTML=`
+    <div class="stat"><div class="label">Total Members</div><div class="value">${members.length}</div></div>
+    <div class="stat success"><div class="label">Total Collected</div><div class="value">${fmt(totalContribs)}</div></div>
+    <div class="stat warning"><div class="label">Active Loans</div><div class="value">${activeLoans.length}</div></div>
+    <div class="stat danger"><div class="label">Outstanding</div><div class="value">${fmt(outstanding)}</div></div>
+    <div class="stat success"><div class="label">Interest Accrued</div><div class="value">${fmt(interestEarned)}</div></div>
+    <div class="stat"><div class="label">Cash In Hand</div><div class="value">${fmt(cash)}</div></div>`;
+  const recent=[...cache.contributions].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8);
+  document.getElementById('recentContribs').innerHTML=recent.length?`
+    <table><thead><tr><th>Date</th><th>Member</th><th>Period</th><th>Amount</th></tr></thead><tbody>
+    ${recent.map(c=>{const m=cache.users.find(u=>u.id===c.userId);return `<tr><td>${fmtDate(c.date)}</td><td>${m?m.name:'—'}</td><td>${MONTHS[c.month]} ${c.year}</td><td>${fmt(c.amount)}</td></tr>`;}).join('')}
+    </tbody></table>`:'<div class="empty">No contributions yet.</div>';
+  document.getElementById('activeLoansSummary').innerHTML=activeLoans.length?`
+    <table><thead><tr><th>Member</th><th>Principal</th><th>Months</th><th>Interest</th><th>Paid</th><th>Outstanding</th></tr></thead><tbody>
+    ${activeLoans.map(l=>{const st=loanStatus(l);const m=cache.users.find(u=>u.id===l.userId);return `<tr><td>${m?m.name:'—'}</td><td>${fmt(l.principal)}</td><td>${st.months}</td><td>${fmt(st.interest)}</td><td>${fmt(st.paid)}</td><td><b>${fmt(st.outstanding)}</b></td></tr>`;}).join('')}
+    </tbody></table>`:'<div class="empty">No active loans.</div>';
+}
+
+/* ============== MEMBERS ============== */
+function renderMembers(){
+  const members=cache.users.filter(u=>u.role==='member');
+  document.getElementById('membersList').innerHTML=members.length?`
+    <table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Total Contrib.</th><th>Active Loan</th><th>Actions</th></tr></thead><tbody>
+    ${members.map(m=>{
+      const totalC=cache.contributions.filter(c=>c.userId===m.id).reduce((s,c)=>s+Number(c.amount),0);
+      const activeL=cache.loans.find(l=>l.userId===m.id&&!loanStatus(l).closed);
+      return `<tr>
+        <td><b>${m.name}</b></td><td>${m.email}</td><td>${m.phone||'—'}</td>
+        <td>${fmt(totalC)}</td>
+        <td>${activeL?`<span class="badge badge-warning">${fmt(loanStatus(activeL).outstanding)}</span>`:'<span class="badge badge-muted">None</span>'}</td>
+        <td>
+          <button class="btn btn-sm btn-secondary" onclick="editMember('${m.id}')">Edit</button>
+          <button class="btn btn-sm btn-warning" onclick="resetMemberPwd('${m.email}')">Reset Pwd</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteMember('${m.id}','${m.name}')">Delete</button>
+        </td></tr>`;
+    }).join('')}
+    </tbody></table>`:'<div class="empty">No members added yet. Click "+ Add Member".</div>';
+}
+
+document.getElementById('addMemberBtn').addEventListener('click',()=>{
+  openModal(`
+    <h3>Add New Member</h3>
+    <div class="form-group"><label>Full Name</label><input id="mName" type="text" /></div>
+    <div class="form-group"><label>Email (used for login)</label><input id="mEmail" type="email" /></div>
+    <div class="form-group"><label>Initial Password</label><input id="mPass" type="text" value="member123" /></div>
+    <div class="form-group"><label>Phone (optional)</label><input id="mPhone" type="text" /></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveNewMemberBtn">Create Member</button>
+    </div>`);
+  document.getElementById('saveNewMemberBtn').addEventListener('click', saveNewMember);
+});
+
+async function saveNewMember(){
+  const name=document.getElementById('mName').value.trim();
+  const email=document.getElementById('mEmail').value.trim().toLowerCase();
+  const password=document.getElementById('mPass').value;
+  const phone=document.getElementById('mPhone').value.trim();
+  if(!name||!email||!password){ toast('All fields required','error'); return; }
+  try{
+    const cred=await createUserWithEmailAndPassword(secondaryAuth,email,password);
+    await setDoc(doc(fs,'users',cred.user.uid),{email,name,phone,role:'member',createdAt:new Date().toISOString()});
+    await signOut(secondaryAuth);
+    closeModal(); await refreshData(); renderMembers(); toast('Member added');
+  }catch(e){ toast('Error: '+e.message,'error'); }
+}
+
+window.editMember = function(id){
+  const m=cache.users.find(u=>u.id===id); if(!m) return;
+  openModal(`
+    <h3>Edit Member</h3>
+    <div class="form-group"><label>Full Name</label><input id="eName" type="text" value="${m.name}" /></div>
+    <div class="form-group"><label>Phone</label><input id="ePhone" type="text" value="${m.phone||''}" /></div>
+    <p style="font-size:12px;color:var(--muted);">Email (${m.email}) cannot be changed after creation.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditMember('${id}')">Save</button>
+    </div>`);
+};
+window.saveEditMember = async function(id){
+  const m=cache.users.find(u=>u.id===id);
+  const name=document.getElementById('eName').value.trim();
+  const phone=document.getElementById('ePhone').value.trim();
+  try{
+    await updateDoc(doc(fs,'users',id),{name,phone});
+    closeModal(); await refreshData(); renderMembers(); toast('Updated');
+  }catch(e){ toast('Error: '+e.message,'error'); }
+};
+window.resetMemberPwd = async function(email){
+  try{ await sendPasswordResetEmail(auth,email); toast('Reset email sent to '+email); }
+  catch(e){ toast('Error: '+e.message,'error'); }
+};
+window.deleteMember = async function(id,name){
+  if(!confirm(`Delete profile of "${name}"? (Auth account remains; contact you to delete via Firebase console.)`)) return;
+  try{ await deleteDoc(doc(fs,'users',id)); await refreshData(); renderMembers(); toast('Member removed'); }
+  catch(e){ toast('Error: '+e.message,'error'); }
+};
+
+/* ============== CONTRIBUTIONS ============== */
+function renderContribsPage(){
+  const sel=document.getElementById('contribMember');
+  sel.innerHTML=cache.users.filter(u=>u.role==='member').map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
+  const mSel=document.getElementById('contribMonth');
+  mSel.innerHTML=MONTHS.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
+  const now=new Date();
+  mSel.value=now.getMonth();
+  document.getElementById('contribYear').value=now.getFullYear();
+  document.getElementById('contribAmount').value=cache.settings.monthlyAmount;
+  const all=[...cache.contributions].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('allContribs').innerHTML=all.length?`
+    <table><thead><tr><th>Date</th><th>Member</th><th>Period</th><th>Amount</th><th>Notes</th><th></th></tr></thead><tbody>
+    ${all.map(c=>{const m=cache.users.find(u=>u.id===c.userId);return `<tr><td>${fmtDate(c.date)}</td><td>${m?m.name:'—'}</td><td>${MONTHS[c.month]} ${c.year}</td><td>${fmt(c.amount)}</td><td>${c.notes||''}</td><td><button class="btn btn-sm btn-danger" onclick="deleteContrib('${c.id}')">×</button></td></tr>`;}).join('')}
+    </tbody></table>`:'<div class="empty">No contributions yet.</div>';
+}
+
+document.getElementById('recordContribBtn').addEventListener('click', async ()=>{
+  const userId=document.getElementById('contribMember').value;
+  const month=parseInt(document.getElementById('contribMonth').value);
+  const year=parseInt(document.getElementById('contribYear').value);
+  const amount=parseFloat(document.getElementById('contribAmount').value);
+  const notes=document.getElementById('contribNotes').value;
+  if(!userId||isNaN(amount)||amount<=0){ toast('Fill member and amount','error'); return; }
+  if(cache.contributions.some(c=>c.userId===userId&&c.month===month&&c.year===year)){
+    if(!confirm('A contribution already exists for this member and period. Add another?')) return;
+  }
+  try{
+    await addDoc(collection(fs,'contributions'),{userId,month,year,amount,notes,date:new Date().toISOString()});
+    document.getElementById('contribNotes').value='';
+    await refreshData(); renderContribsPage(); toast('Contribution recorded');
+  }catch(e){ toast('Error: '+e.message,'error'); }
+});
+
+window.deleteContrib = async function(id){
+  if(!confirm('Delete this contribution?')) return;
+  try{ await deleteDoc(doc(fs,'contributions',id)); await refreshData(); renderContribsPage(); toast('Deleted'); }
+  catch(e){ toast('Error: '+e.message,'error'); }
+};
+
+/* ============== LOANS ============== */
+function renderLoansPage(){
+  const sel=document.getElementById('loanMember');
+  sel.innerHTML=cache.users.filter(u=>u.role==='member').map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
+  document.getElementById('loanDate').value=new Date().toISOString().substring(0,10);
+  const all=[...cache.loans].sort((a,b)=>new Date(b.issueDate)-new Date(a.issueDate));
+  document.getElementById('allLoans').innerHTML=all.length?`
+    <table><thead><tr><th>Member</th><th>Issued</th><th>Principal</th><th>Months</th><th>Interest</th><th>Total</th><th>Paid</th><th>Outstanding</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+    ${all.map(l=>{const st=loanStatus(l);const m=cache.users.find(u=>u.id===l.userId);return `<tr>
+      <td>${m?m.name:'—'}</td><td>${fmtDate(l.issueDate)}</td><td>${fmt(l.principal)}</td><td>${st.months}</td><td>${fmt(st.interest)}</td><td>${fmt(st.total)}</td><td>${fmt(st.paid)}</td><td><b>${fmt(st.outstanding)}</b></td>
+      <td>${st.closed?'<span class="badge badge-success">Closed</span>':'<span class="badge badge-warning">Active</span>'}</td>
+      <td>
+        <button class="btn btn-sm btn-primary" onclick="openRepay('${l.id}')">Repay</button>
+        <button class="btn btn-sm btn-secondary" onclick="viewLoan('${l.id}')">View</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteLoan('${l.id}')">×</button>
+      </td></tr>`;}).join('')}
+    </tbody></table>`:'<div class="empty">No loans issued yet.</div>';
+}
+
+document.getElementById('issueLoanBtn').addEventListener('click', async ()=>{
+  const userId=document.getElementById('loanMember').value;
+  const principal=parseFloat(document.getElementById('loanPrincipal').value);
+  const issueDate=document.getElementById('loanDate').value;
+  const notes=document.getElementById('loanNotes').value;
+  if(!userId||!principal||principal<=0||!issueDate){ toast('Fill all required fields','error'); return; }
+  const existing=cache.loans.find(l=>l.userId===userId&&!loanStatus(l).closed);
+  if(existing&&!confirm('This member has an active loan. Issue another?')) return;
+  try{
+    await addDoc(collection(fs,'loans'),{userId,principal,issueDate,notes,repayments:[],status:'active',createdAt:new Date().toISOString()});
+    document.getElementById('loanPrincipal').value=''; document.getElementById('loanNotes').value='';
+    await refreshData(); renderLoansPage(); toast('Loan issued');
+  }catch(e){ toast('Error: '+e.message,'error'); }
+});
+
+window.openRepay = function(lid){
+  const l=cache.loans.find(x=>x.id===lid); const st=loanStatus(l);
+  const m=cache.users.find(u=>u.id===l.userId);
+  openModal(`
+    <h3>Record Repayment — ${m?m.name:''}</h3>
+    <p style="margin-bottom:10px;color:var(--muted);font-size:13px;">
+      Principal: ${fmt(l.principal)} | Interest: ${fmt(st.interest)} | Total: ${fmt(st.total)}<br/>
+      Paid so far: ${fmt(st.paid)} | <b>Outstanding: ${fmt(st.outstanding)}</b>
+    </p>
+    <div class="form-group"><label>Repayment Amount (₹)</label><input id="rAmount" type="number" value="${st.outstanding.toFixed(2)}" /></div>
+    <div class="form-group"><label>Date</label><input id="rDate" type="date" value="${new Date().toISOString().substring(0,10)}" /></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-success" onclick="saveRepay('${lid}')">Record</button>
+    </div>`);
+};
+window.saveRepay = async function(lid){
+  const l=cache.loans.find(x=>x.id===lid);
+  const amt=parseFloat(document.getElementById('rAmount').value);
+  const date=document.getElementById('rDate').value;
+  if(!amt||amt<=0){ toast('Enter valid amount','error'); return; }
+  const reps=[...(l.repayments||[]),{id:'r-'+Date.now(),amount:amt,date:new Date(date).toISOString()}];
+  try{
+    await updateDoc(doc(fs,'loans',lid),{repayments:reps});
+    closeModal(); await refreshData(); renderLoansPage(); toast('Repayment recorded');
+  }catch(e){ toast('Error: '+e.message,'error'); }
+};
+window.viewLoan = function(lid){
+  const l=cache.loans.find(x=>x.id===lid); const st=loanStatus(l);
+  const m=cache.users.find(u=>u.id===l.userId);
+  const reps=l.repayments||[];
+  const repHtml=reps.length?reps.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${fmt(r.amount)}</td></tr>`).join(''):'<tr><td colspan="2" class="empty">No repayments yet.</td></tr>';
+  openModal(`
+    <h3>Loan Details — ${m?m.name:''}</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px;">Issued: ${fmtDate(l.issueDate)} | Notes: ${l.notes||'—'}</p>
+    <table>
+      <tr><td>Principal</td><td><b>${fmt(l.principal)}</b></td></tr>
+      <tr><td>Months elapsed</td><td>${st.months}</td></tr>
+      <tr><td>Interest rate</td><td>${cache.settings.interestRate}% /month</td></tr>
+      <tr><td>Interest accrued</td><td>${fmt(st.interest)}</td></tr>
+      <tr><td>Total due</td><td>${fmt(st.total)}</td></tr>
+      <tr><td>Paid</td><td>${fmt(st.paid)}</td></tr>
+      <tr><td>Outstanding</td><td><b>${fmt(st.outstanding)}</b></td></tr>
+    </table>
+    <h4 style="margin-top:14px;margin-bottom:6px;">Repayment History</h4>
+    <table><thead><tr><th>Date</th><th>Amount</th></tr></thead><tbody>${repHtml}</tbody></table>
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>`);
+};
+window.deleteLoan = async function(lid){
+  if(!confirm('Delete this loan and all its repayments?')) return;
+  try{ await deleteDoc(doc(fs,'loans',lid)); await refreshData(); renderLoansPage(); toast('Deleted'); }
+  catch(e){ toast('Error: '+e.message,'error'); }
+};
+
+/* ============== LOAN REQUESTS ============== */
+function renderRequestsPage(){
+  const pending=cache.loanRequests.filter(r=>r.status==='pending');
+  const processed=cache.loanRequests.filter(r=>r.status!=='pending');
+  document.getElementById('pendingRequests').innerHTML=pending.length?`
+    <table><thead><tr><th>Date</th><th>Member</th><th>Amount</th><th>Reason</th><th>Actions</th></tr></thead><tbody>
+    ${pending.map(r=>{const m=cache.users.find(u=>u.id===r.userId);return `<tr>
+      <td>${fmtDate(r.requestDate)}</td><td>${m?m.name:'—'}</td><td>${fmt(r.amount)}</td><td>${r.reason||'—'}</td>
+      <td><button class="btn btn-sm btn-success" onclick="approveRequest('${r.id}')">Approve & Issue</button>
+      <button class="btn btn-sm btn-danger" onclick="rejectRequest('${r.id}')">Reject</button></td></tr>`;}).join('')}
+    </tbody></table>`:'<div class="empty">No pending requests.</div>';
+  document.getElementById('processedRequests').innerHTML=processed.length?`
+    <table><thead><tr><th>Date</th><th>Member</th><th>Amount</th><th>Reason</th><th>Status</th></tr></thead><tbody>
+    ${processed.map(r=>{const m=cache.users.find(u=>u.id===r.userId);const badge=r.status==='approved'?'badge-success':'badge-danger';return `<tr><td>${fmtDate(r.requestDate)}</td><td>${m?m.name:'—'}</td><td>${fmt(r.amount)}</td><td>${r.reason||'—'}</td><td><span class="badge ${badge}">${r.status}</span></td></tr>`;}).join('')}
+    </tbody></table>`:'<div class="empty">Nothing processed yet.</div>';
+}
+window.approveRequest = async function(rid){
+  const r=cache.loanRequests.find(x=>x.id===rid);
+  if(!confirm(`Approve loan of ${fmt(r.amount)} and issue it now?`)) return;
+  try{
+    await addDoc(collection(fs,'loans'),{userId:r.userId,principal:r.amount,issueDate:new Date().toISOString().substring(0,10),notes:'From request: '+(r.reason||''),repayments:[],status:'active',createdAt:new Date().toISOString()});
+    await updateDoc(doc(fs,'loanRequests',rid),{status:'approved'});
+    await refreshData(); renderRequestsPage(); toast('Approved & loan issued');
+  }catch(e){ toast('Error: '+e.message,'error'); }
+};
+window.rejectRequest = async function(rid){
+  try{ await updateDoc(doc(fs,'loanRequests',rid),{status:'rejected'}); await refreshData(); renderRequestsPage(); toast('Request rejected','warn'); }
+  catch(e){ toast('Error: '+e.message,'error'); }
+};
+
+/* ============== SETTINGS ============== */
+function renderSettings(){
+  document.getElementById('setMonthly').value=cache.settings.monthlyAmount;
+  document.getElementById('setInterest').value=cache.settings.interestRate;
+  document.getElementById('setGroupName').value=cache.settings.groupName;
+}
+document.getElementById('saveSettingsBtn').addEventListener('click', async ()=>{
+  const data={
+    monthlyAmount:parseFloat(document.getElementById('setMonthly').value)||1000,
+    interestRate:parseFloat(document.getElementById('setInterest').value)||0.5,
+    groupName:document.getElementById('setGroupName').value||'Our Savings Group'
+  };
+  try{ await setDoc(doc(fs,'settings','main'),data); cache.settings=data; toast('Settings saved'); }
+  catch(e){ toast('Error: '+e.message,'error'); }
+});
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify(cache,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`savings-loan-backup-${new Date().toISOString().substring(0,10)}.json`;
+  a.click(); toast('Exported');
+});
+
+/* ============== USER DASHBOARD ============== */
+function renderUserDashboard(){
+  const myContribs=cache.contributions.filter(c=>c.userId===currentUser.id);
+  const totalSaved=myContribs.reduce((s,c)=>s+Number(c.amount),0);
+  const myLoans=cache.loans.filter(l=>l.userId===currentUser.id);
+  const activeLoan=myLoans.find(l=>!loanStatus(l).closed);
+  const myPending=cache.loanRequests.filter(r=>r.userId===currentUser.id&&r.status==='pending').length;
+  document.getElementById('userStats').innerHTML=`
+    <div class="stat success"><div class="label">Total Saved</div><div class="value">${fmt(totalSaved)}</div></div>
+    <div class="stat"><div class="label">Months Contributed</div><div class="value">${myContribs.length}</div></div>
+    <div class="stat warning"><div class="label">Active Loan</div><div class="value">${activeLoan?fmt(loanStatus(activeLoan).outstanding):'—'}</div></div>
+    <div class="stat"><div class="label">Pending Requests</div><div class="value">${myPending}</div></div>`;
+  if(activeLoan){
+    const st=loanStatus(activeLoan);
+    document.getElementById('userActiveLoan').innerHTML=`
+      <table>
+        <tr><td>Principal</td><td><b>${fmt(activeLoan.principal)}</b></td></tr>
+        <tr><td>Issued on</td><td>${fmtDate(activeLoan.issueDate)}</td></tr>
+        <tr><td>Months elapsed</td><td>${st.months}</td></tr>
+        <tr><td>Interest (${cache.settings.interestRate}% × ${st.months} mo)</td><td>${fmt(st.interest)}</td></tr>
+        <tr><td>Total payable</td><td>${fmt(st.total)}</td></tr>
+        <tr><td>Paid so far</td><td>${fmt(st.paid)}</td></tr>
+        <tr style="background:#fef3c7"><td><b>Outstanding</b></td><td><b>${fmt(st.outstanding)}</b></td></tr>
+      </table>`;
+  } else {
+    document.getElementById('userActiveLoan').innerHTML='<div class="empty">No active loan. You can request one from "Request Loan".</div>';
+  }
+  const activity=[
+    ...myContribs.map(c=>({type:'contrib',date:c.date,text:`Contribution for ${MONTHS[c.month]} ${c.year}`,amount:c.amount})),
+    ...myLoans.map(l=>({type:'loan',date:l.issueDate,text:'Loan issued',amount:l.principal})),
+    ...myLoans.flatMap(l=>(l.repayments||[]).map(r=>({type:'repay',date:r.date,text:'Loan repayment',amount:r.amount})))
+  ].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);
+  document.getElementById('userRecentActivity').innerHTML=activity.length?`
+    <table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Amount</th></tr></thead><tbody>
+    ${activity.map(a=>{const badge=a.type==='contrib'?'badge-success':a.type==='loan'?'badge-warning':'badge-info';const label=a.type==='contrib'?'Saving':a.type==='loan'?'Loan':'Repayment';return `<tr><td>${fmtDate(a.date)}</td><td><span class="badge ${badge}">${label}</span></td><td>${a.text}</td><td>${fmt(a.amount)}</td></tr>`;}).join('')}
+    </tbody></table>`:'<div class="empty">No activity yet.</div>';
+}
+
+function renderUserContribs(){
+  const my=cache.contributions.filter(c=>c.userId===currentUser.id).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const total=my.reduce((s,c)=>s+Number(c.amount),0);
+  document.getElementById('userContribs').innerHTML=my.length?`
+    <p style="margin-bottom:10px;color:var(--muted);font-size:13px;">Total saved: <b style="color:var(--success);font-size:16px;">${fmt(total)}</b> across ${my.length} month(s)</p>
+    <table><thead><tr><th>Date Recorded</th><th>Period</th><th>Amount</th><th>Notes</th></tr></thead><tbody>
+    ${my.map(c=>`<tr><td>${fmtDate(c.date)}</td><td>${MONTHS[c.month]} ${c.year}</td><td>${fmt(c.amount)}</td><td>${c.notes||'—'}</td></tr>`).join('')}
+    </tbody></table>`:'<div class="empty">No contributions yet.</div>';
+}
+
+function renderUserLoans(){
+  const my=cache.loans.filter(l=>l.userId===currentUser.id).sort((a,b)=>new Date(b.issueDate)-new Date(a.issueDate));
+  if(!my.length){ document.getElementById('userLoans').innerHTML='<div class="empty">No loans taken yet.</div>'; return; }
+  document.getElementById('userLoans').innerHTML=my.map(l=>{
+    const st=loanStatus(l);
+    const reps=l.repayments||[];
+    const repHtml=reps.length?reps.map(r=>`<tr><td>${fmtDate(r.date)}</td><td>${fmt(r.amount)}</td></tr>`).join(''):'<tr><td colspan="2" class="empty">No repayments yet.</td></tr>';
+    return `<div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <b>Loan issued ${fmtDate(l.issueDate)}</b>
+        ${st.closed?'<span class="badge badge-success">Closed</span>':'<span class="badge badge-warning">Active</span>'}
+      </div>
+      <table style="margin-bottom:10px;">
+        <tr><td>Principal</td><td>${fmt(l.principal)}</td><td>Months</td><td>${st.months}</td></tr>
+        <tr><td>Interest</td><td>${fmt(st.interest)}</td><td>Total due</td><td>${fmt(st.total)}</td></tr>
+        <tr><td>Paid</td><td>${fmt(st.paid)}</td><td><b>Outstanding</b></td><td><b>${fmt(st.outstanding)}</b></td></tr>
+      </table>
+      <b style="font-size:13px;">Repayment History</b>
+      <table><thead><tr><th>Date</th><th>Amount</th></tr></thead><tbody>${repHtml}</tbody></table>
+    </div>`;
+  }).join('');
+}
+
+function renderUserRequests(){
+  const my=cache.loanRequests.filter(r=>r.userId===currentUser.id).sort((a,b)=>new Date(b.requestDate)-new Date(a.requestDate));
+  document.getElementById('userRequests').innerHTML=my.length?`
+    <table><thead><tr><th>Date</th><th>Amount</th><th>Reason</th><th>Status</th></tr></thead><tbody>
+    ${my.map(r=>{const badge=r.status==='pending'?'badge-warning':r.status==='approved'?'badge-success':'badge-danger';return `<tr><td>${fmtDate(r.requestDate)}</td><td>${fmt(r.amount)}</td><td>${r.reason||'—'}</td><td><span class="badge ${badge}">${r.status}</span></td></tr>`;}).join('')}
+    </tbody></table>`:'<div class="empty">No requests submitted yet.</div>';
+}
+
+document.getElementById('submitReqBtn').addEventListener('click', async ()=>{
+  const amount=parseFloat(document.getElementById('reqAmount').value);
+  const reason=document.getElementById('reqReason').value.trim();
+  if(!amount||amount<=0){ toast('Enter valid amount','error'); return; }
+  try{
+    await addDoc(collection(fs,'loanRequests'),{userId:currentUser.id,amount,reason,status:'pending',requestDate:new Date().toISOString()});
+    document.getElementById('reqAmount').value=''; document.getElementById('reqReason').value='';
+    await refreshData(); renderUserRequests(); toast('Request submitted');
+  }catch(e){ toast('Error: '+e.message,'error'); }
+});
+
+function renderUserAccount(){
+  document.getElementById('userProfile').innerHTML=`
+    <table>
+      <tr><td><b>Name</b></td><td>${currentUser.name}</td></tr>
+      <tr><td><b>Email</b></td><td>${currentUser.email}</td></tr>
+      <tr><td><b>Phone</b></td><td>${currentUser.phone||'—'}</td></tr>
+      <tr><td><b>Member since</b></td><td>${fmtDate(currentUser.createdAt)}</td></tr>
+    </table>`;
+}
+document.getElementById('userResetBtn').addEventListener('click', async ()=>{
+  try{ await sendPasswordResetEmail(auth,currentUser.email); toast('Reset email sent to '+currentUser.email); }
+  catch(e){ toast('Error: '+e.message,'error'); }
+});
+</script>
+</body>
+</html>
