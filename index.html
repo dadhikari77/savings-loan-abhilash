@@ -3,76 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChitFund Pro</title>
+<title>ChitFund Pro - Savings & Loans</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
 body { background: #f5f5f7; color: #1d1d1f; }
 
-/* LOGIN */
-#loginPage { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea, #764ba2); padding: 20px; }
-.login-box { background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-.login-box h1 { text-align: center; margin-bottom: 10px; font-size: 28px; }
-.login-box p { text-align: center; color: #888; margin-bottom: 30px; }
-.login-box input { width: 100%; padding: 14px; border: 2px solid #e5e5ea; border-radius: 10px; margin-bottom: 15px; font-size: 15px; }
-.login-box input:focus { outline: none; border-color: #1D9E75; }
-.login-box button { width: 100%; padding: 14px; background: #1D9E75; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
-.login-box button:hover { background: #0F6E56; }
-.error { background: #fee; color: #c33; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: none; }
+/* LOGIN PAGE */
+#loginPage { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; }
+.login-box { background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.logo-circle { width: 70px; height: 70px; background: linear-gradient(135deg, #1D9E75, #0F6E56); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 32px; }
+.login-box h1 { text-align: center; font-size: 26px; margin-bottom: 6px; }
+.login-box p { text-align: center; color: #888; margin-bottom: 25px; font-size: 14px; }
+
+.role-tabs { display: flex; background: #f5f5f7; border-radius: 12px; padding: 5px; margin-bottom: 25px; }
+.role-tab { flex: 1; padding: 10px; text-align: center; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 14px; color: #888; transition: all 0.2s; }
+.role-tab.active { background: white; color: #1d1d1f; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+.login-box label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.login-box input { width: 100%; padding: 13px; border: 2px solid #e5e5ea; border-radius: 10px; margin-bottom: 15px; font-size: 15px; background: #f5f5f7; }
+.login-box input:focus { outline: none; border-color: #1D9E75; background: white; }
+.login-box button { width: 100%; padding: 14px; background: linear-gradient(135deg, #1D9E75, #0F6E56); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; }
+.login-box button:hover { box-shadow: 0 8px 20px rgba(29,158,117,0.4); }
+.login-box button:disabled { opacity: 0.6; cursor: not-allowed; }
+.error { background: #fee; color: #c33; padding: 12px; border-radius: 10px; margin-bottom: 15px; display: none; font-size: 14px; }
 .error.show { display: block; }
+.hint { background: #e8f5fe; color: #0066cc; padding: 12px; border-radius: 10px; margin-top: 15px; font-size: 13px; line-height: 1.6; }
 
 /* MAIN APP */
 #mainApp { display: none; min-height: 100vh; }
 #mainApp.show { display: flex; }
-
-.sidebar { width: 250px; background: white; padding: 20px; border-right: 1px solid #e5e5ea; }
-.sidebar h2 { margin-bottom: 30px; color: #1D9E75; }
-.menu-item { padding: 12px 15px; border-radius: 10px; cursor: pointer; margin-bottom: 5px; font-weight: 600; }
+.sidebar { width: 260px; background: white; border-right: 1px solid #e5e5ea; padding: 20px 0; flex-shrink: 0; }
+.sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid #e5e5ea; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
+.sidebar-logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #1D9E75, #0F6E56); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+.sidebar-logo-text { font-size: 17px; font-weight: 700; }
+.menu-item { padding: 11px 15px; margin: 0 10px 4px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; }
 .menu-item:hover { background: #f5f5f7; }
 .menu-item.active { background: #e8f5f1; color: #0F6E56; }
-.user-box { margin-top: 30px; padding: 15px; background: #f5f5f7; border-radius: 10px; display: flex; align-items: center; gap: 10px; }
-.user-avatar { width: 40px; height: 40px; background: #667eea; color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-.logout { margin-left: auto; cursor: pointer; font-size: 20px; }
+.role-badge { display: inline-block; padding: 4px 10px; background: #e8f5f1; color: #0F6E56; border-radius: 20px; font-size: 11px; font-weight: 700; margin: 10px 20px; }
+.role-badge.admin { background: #fff3e0; color: #c17817; }
+.user-box { padding: 15px 20px; margin-top: 20px; border-top: 1px solid #e5e5ea; display: flex; align-items: center; gap: 10px; }
+.user-avatar { width: 38px; height: 38px; background: #667eea; color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.logout-btn { margin-left: auto; cursor: pointer; padding: 8px; border-radius: 6px; font-size: 18px; }
+.logout-btn:hover { background: #f5f5f7; }
 
-.content { flex: 1; padding: 30px; overflow-y: auto; }
+.content { flex: 1; overflow-y: auto; padding: 30px; background: #f5f5f7; }
 .page { display: none; }
 .page.active { display: block; }
-.page-title { display: flex; justify-content: space-between; margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
-.page-title h2 { font-size: 28px; }
-.btn { padding: 10px 20px; background: #1D9E75; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
-.btn:hover { background: #0F6E56; }
-.btn-sm { padding: 6px 12px; font-size: 12px; margin: 0 2px; }
+.page-header { display: flex; justify-content: space-between; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+.page-header h2 { font-size: 28px; font-weight: 800; }
+.page-header p { color: #888; font-size: 14px; margin-top: 4px; }
+
+.btn { padding: 10px 20px; background: linear-gradient(135deg, #1D9E75, #0F6E56); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { box-shadow: 0 4px 12px rgba(29,158,117,0.3); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
 .btn-red { background: #e24b4a; }
-.btn-red:hover { background: #c33; }
 .btn-grey { background: #999; }
+.btn-blue { background: #0066cc; }
 
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-.stat { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.stat { background: white; padding: 20px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+.stat-icon { width: 40px; height: 40px; background: #e8f5f1; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; font-size: 18px; }
 .stat-label { color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; }
-.stat-value { font-size: 30px; font-weight: bold; margin-top: 5px; }
+.stat-value { font-size: 28px; font-weight: 800; margin-top: 5px; }
+.stat-sub { color: #888; font-size: 12px; margin-top: 4px; }
 
-.box { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.box { background: white; padding: 25px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 20px; }
+.box h3 { margin-bottom: 15px; font-size: 16px; }
 table { width: 100%; border-collapse: collapse; }
-th { text-align: left; padding: 12px; color: #888; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #f5f5f7; }
-td { padding: 12px; border-bottom: 1px solid #f5f5f7; }
+th { text-align: left; padding: 12px; color: #888; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid #f5f5f7; font-weight: 700; }
+td { padding: 14px 12px; border-bottom: 1px solid #f5f5f7; font-size: 14px; }
 tr:hover td { background: #fafafa; }
 
+.badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.badge-green { background: #e8f5f1; color: #0F6E56; }
+.badge-amber { background: #fff3e0; color: #c17817; }
+.badge-red { background: #fee; color: #c33; }
+.badge-blue { background: #e8f5fe; color: #0066cc; }
+
 /* MODAL */
-.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .modal-bg.show { display: flex; }
-.modal { background: white; border-radius: 15px; padding: 25px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-.modal h3 { margin-bottom: 20px; }
-.modal label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
-.modal input, .modal select { width: 100%; padding: 10px; border: 2px solid #e5e5ea; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
+.modal { background: white; border-radius: 18px; padding: 25px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.modal h3 { margin-bottom: 20px; font-size: 20px; }
+.modal label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; }
+.modal input, .modal select { width: 100%; padding: 11px; border: 2px solid #e5e5ea; border-radius: 10px; margin-bottom: 14px; font-size: 14px; background: #f5f5f7; }
+.modal input:focus, .modal select:focus { outline: none; border-color: #1D9E75; background: white; }
 .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 10px; opacity: 0; transition: 0.3s; z-index: 9999; }
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 10px; opacity: 0; transition: 0.3s; z-index: 9999; font-weight: 600; }
 .toast.show { opacity: 1; }
 .toast.error { background: #c33; }
+
+/* PASSBOOK STYLE */
+.passbook { background: linear-gradient(135deg, #1D9E75, #0F6E56); color: white; padding: 25px; border-radius: 14px; margin-bottom: 20px; }
+.passbook .label { font-size: 12px; opacity: 0.8; text-transform: uppercase; }
+.passbook .value { font-size: 32px; font-weight: 800; margin-top: 5px; }
+.passbook .sub { font-size: 13px; opacity: 0.9; margin-top: 6px; }
+
+.empty { text-align: center; padding: 40px; color: #888; }
+
+/* EMI CALCULATOR PREVIEW */
+.calc-preview { background: #f5f5f7; padding: 15px; border-radius: 10px; margin-top: 10px; display: none; }
+.calc-preview.show { display: block; }
+.calc-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+.calc-row.total { border-top: 2px solid #ddd; padding-top: 10px; margin-top: 10px; font-weight: 700; font-size: 16px; color: #0F6E56; }
 
 @media (max-width: 768px) {
   .sidebar { display: none; }
   .row { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -81,131 +121,273 @@ tr:hover td { background: #fafafa; }
 <!-- LOGIN PAGE -->
 <div id="loginPage">
   <div class="login-box">
-    <h1>💰 ChitFund Pro</h1>
-    <p>Community Savings Platform</p>
+    <div class="logo-circle">💰</div>
+    <h1>ChitFund Pro</h1>
+    <p>Community Savings & Lending Platform</p>
+    
+    <div class="role-tabs">
+      <div class="role-tab active" id="adminTab" onclick="setRole('admin')">👨‍💼 Admin</div>
+      <div class="role-tab" id="memberTab" onclick="setRole('member')">👤 Member</div>
+    </div>
+
     <div class="error" id="loginError"></div>
+    
     <form onsubmit="doLogin(event)">
-      <input type="email" id="email" placeholder="Email" required>
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="your@email.com" required>
+      <label>Password</label>
       <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Sign In</button>
+      <button type="submit" id="loginBtn">Sign In</button>
     </form>
+    
+    <div class="hint">
+      <strong>📌 Important:</strong><br>
+      • Admin: Full access to all data & management<br>
+      • Member: View your passbook, contributions & loan
+    </div>
   </div>
 </div>
 
 <!-- MAIN APP -->
 <div id="mainApp">
   <div class="sidebar">
-    <h2>💰 ChitFund Pro</h2>
-    <div class="menu-item active" onclick="showPage('home', this)">📊 Dashboard</div>
-    <div class="menu-item" onclick="showPage('membersPage', this)">👥 Members</div>
-    <div class="menu-item" onclick="showPage('contribsPage', this)">💵 Contributions</div>
-    <div class="menu-item" onclick="showPage('loansPage', this)">📋 Loans</div>
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">💰</div>
+      <div class="sidebar-logo-text">ChitFund Pro</div>
+    </div>
+    
+    <div class="role-badge" id="roleBadge">Administrator</div>
+    
+    <!-- ADMIN MENU -->
+    <div id="adminMenu">
+      <div class="menu-item active" onclick="goPage('home', this)">📊 Dashboard</div>
+      <div class="menu-item" onclick="goPage('membersPage', this)">👥 Members</div>
+      <div class="menu-item" onclick="goPage('contribsPage', this)">💵 Contributions</div>
+      <div class="menu-item" onclick="goPage('loansPage', this)">📋 Loans</div>
+      <div class="menu-item" onclick="goPage('reportsPage', this)">📈 Reports</div>
+    </div>
+    
+    <!-- MEMBER MENU -->
+    <div id="memberMenu" style="display:none;">
+      <div class="menu-item active" onclick="goPage('memberHome', this)">📒 My Passbook</div>
+      <div class="menu-item" onclick="goPage('memberContribs', this)">💵 My Contributions</div>
+      <div class="menu-item" onclick="goPage('memberLoan', this)">📋 My Loan</div>
+    </div>
+    
     <div class="user-box">
       <div class="user-avatar" id="userInitials">U</div>
-      <div>
-        <div id="userEmail" style="font-size:13px;font-weight:bold;">user@email.com</div>
-        <div style="font-size:11px;color:#888;">Administrator</div>
+      <div style="flex:1;">
+        <div id="userEmail" style="font-size:13px;font-weight:bold;overflow:hidden;text-overflow:ellipsis;">user</div>
+        <div style="font-size:11px;color:#888;" id="userRoleText">Admin</div>
       </div>
-      <div class="logout" onclick="doLogout()" title="Logout">🚪</div>
+      <div class="logout-btn" onclick="doLogout()" title="Logout">🚪</div>
     </div>
   </div>
 
   <div class="content">
-    <!-- DASHBOARD -->
+    
+    <!-- ============= ADMIN PAGES ============= -->
+    
+    <!-- ADMIN: DASHBOARD -->
     <div class="page active" id="home">
-      <div class="page-title">
-        <h2>Dashboard</h2>
+      <div class="page-header">
+        <div>
+          <h2>Admin Dashboard</h2>
+          <p>Overview of all fund activities</p>
+        </div>
       </div>
       <div class="cards">
         <div class="stat">
+          <div class="stat-icon">👥</div>
           <div class="stat-label">Members</div>
           <div class="stat-value" id="cMembers">0</div>
         </div>
         <div class="stat">
-          <div class="stat-label">Contributions</div>
-          <div class="stat-value" id="cContribs">0</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Total Amount</div>
+          <div class="stat-icon" style="background:#fff3e0;">💵</div>
+          <div class="stat-label">Total Collected</div>
           <div class="stat-value" id="cAmount">₹0</div>
         </div>
         <div class="stat">
+          <div class="stat-icon" style="background:#e8f5fe;">📋</div>
           <div class="stat-label">Active Loans</div>
           <div class="stat-value" id="cLoans">0</div>
         </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:#fee;">💰</div>
+          <div class="stat-label">Loan Amount Out</div>
+          <div class="stat-value" id="cLoanAmt">₹0</div>
+        </div>
       </div>
       <div class="box">
-        <h3>✅ Welcome to ChitFund Pro</h3>
-        <p style="margin-top:10px;color:#666;line-height:1.8;">
-          • Click "Members" to add new members<br>
-          • Click "Contributions" to record payments<br>
-          • Click "Loans" to issue loans<br>
-          • All data is saved to your Firebase database in real-time
-        </p>
+        <h3>📊 Recent Activity</h3>
+        <div id="recentActivity" class="empty">Loading...</div>
       </div>
     </div>
 
-    <!-- MEMBERS PAGE -->
+    <!-- ADMIN: MEMBERS -->
     <div class="page" id="membersPage">
-      <div class="page-title">
-        <h2>Members</h2>
+      <div class="page-header">
+        <div>
+          <h2>Members</h2>
+          <p>Manage all fund members</p>
+        </div>
         <button class="btn" onclick="openMemberModal()">➕ Add Member</button>
       </div>
       <div class="box">
-        <div id="membersList">Loading...</div>
+        <div id="membersList" class="empty">Loading...</div>
       </div>
     </div>
 
-    <!-- CONTRIBUTIONS PAGE -->
+    <!-- ADMIN: CONTRIBUTIONS -->
     <div class="page" id="contribsPage">
-      <div class="page-title">
-        <h2>Contributions</h2>
+      <div class="page-header">
+        <div>
+          <h2>Contributions</h2>
+          <p>Monthly payment records</p>
+        </div>
         <button class="btn" onclick="openContribModal()">➕ Record Payment</button>
       </div>
       <div class="box">
-        <div id="contribsList">Loading...</div>
+        <div id="contribsList" class="empty">Loading...</div>
       </div>
     </div>
 
-    <!-- LOANS PAGE -->
+    <!-- ADMIN: LOANS -->
     <div class="page" id="loansPage">
-      <div class="page-title">
-        <h2>Loans</h2>
+      <div class="page-header">
+        <div>
+          <h2>Loans</h2>
+          <p>0.5% monthly interest on all loans</p>
+        </div>
         <button class="btn" onclick="openLoanModal()">➕ Issue Loan</button>
       </div>
       <div class="box">
-        <div id="loansList">Loading...</div>
+        <div id="loansList" class="empty">Loading...</div>
       </div>
     </div>
+
+    <!-- ADMIN: REPORTS -->
+    <div class="page" id="reportsPage">
+      <div class="page-header">
+        <div>
+          <h2>Reports & Analytics</h2>
+          <p>Financial summary and insights</p>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="stat">
+          <div class="stat-label">Total Contributions</div>
+          <div class="stat-value" id="rTotalContribs">₹0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Total Loans Issued</div>
+          <div class="stat-value" id="rTotalLoans">₹0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Interest Earned</div>
+          <div class="stat-value" id="rInterest">₹0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Available Balance</div>
+          <div class="stat-value" id="rBalance">₹0</div>
+        </div>
+      </div>
+      <div class="box">
+        <h3>👥 Member-wise Summary</h3>
+        <div id="memberSummary" class="empty">Loading...</div>
+      </div>
+    </div>
+
+    <!-- ============= MEMBER PAGES ============= -->
+    
+    <!-- MEMBER: PASSBOOK HOME -->
+    <div class="page" id="memberHome">
+      <div class="page-header">
+        <div>
+          <h2 id="memberName">My Passbook</h2>
+          <p id="memberIdShow">Member ID: -</p>
+        </div>
+      </div>
+      <div class="passbook">
+        <div class="label">💰 Total Contributed</div>
+        <div class="value" id="myTotalContrib">₹0</div>
+        <div class="sub" id="myContribCount">0 payments made</div>
+      </div>
+      <div class="cards">
+        <div class="stat">
+          <div class="stat-label">Monthly Amount</div>
+          <div class="stat-value" id="myMonthly">₹2,000</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Active Loan</div>
+          <div class="stat-value" id="myLoanStatus">No</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Loan Outstanding</div>
+          <div class="stat-value" id="myLoanOut">₹0</div>
+        </div>
+      </div>
+      <div class="box">
+        <h3>📋 Recent Transactions</h3>
+        <div id="myRecentTx" class="empty">No recent activity</div>
+      </div>
+    </div>
+
+    <!-- MEMBER: MY CONTRIBUTIONS -->
+    <div class="page" id="memberContribs">
+      <div class="page-header">
+        <div>
+          <h2>My Contributions</h2>
+          <p>Your monthly payment history</p>
+        </div>
+      </div>
+      <div class="box">
+        <div id="myContribList" class="empty">Loading...</div>
+      </div>
+    </div>
+
+    <!-- MEMBER: MY LOAN -->
+    <div class="page" id="memberLoan">
+      <div class="page-header">
+        <div>
+          <h2>My Loan</h2>
+          <p>Your loan details and EMI schedule</p>
+        </div>
+      </div>
+      <div id="myLoanDetails">
+        <div class="empty">Loading...</div>
+      </div>
+    </div>
+    
   </div>
 </div>
 
-<!-- MEMBER MODAL -->
+<!-- ===== MEMBER MODAL ===== -->
 <div class="modal-bg" id="memberModal">
   <div class="modal">
     <h3 id="memberModalTitle">Add Member</h3>
     <div class="row">
       <div>
-        <label>Name *</label>
+        <label>Full Name *</label>
         <input type="text" id="mName">
       </div>
       <div>
         <label>Member ID *</label>
-        <input type="text" id="mId">
+        <input type="text" id="mId" placeholder="M-001">
       </div>
     </div>
+    <label>Email (for login) *</label>
+    <input type="email" id="mEmail" placeholder="member@example.com">
     <div class="row">
-      <div>
-        <label>Email</label>
-        <input type="email" id="mEmail">
-      </div>
       <div>
         <label>Phone</label>
         <input type="text" id="mPhone">
       </div>
+      <div>
+        <label>Monthly Amount (₹)</label>
+        <input type="number" id="mAmount" value="2000">
+      </div>
     </div>
-    <label>Monthly Amount (₹)</label>
-    <input type="number" id="mAmount" value="2000">
     <div class="modal-buttons">
       <button class="btn btn-grey" onclick="closeMemberModal()">Cancel</button>
       <button class="btn" onclick="saveMember()">Save</button>
@@ -213,10 +395,10 @@ tr:hover td { background: #fafafa; }
   </div>
 </div>
 
-<!-- CONTRIBUTION MODAL -->
+<!-- ===== CONTRIBUTION MODAL ===== -->
 <div class="modal-bg" id="contribModal">
   <div class="modal">
-    <h3>Record Payment</h3>
+    <h3>Record Contribution</h3>
     <label>Member *</label>
     <select id="cMember"></select>
     <div class="row">
@@ -238,7 +420,7 @@ tr:hover td { background: #fafafa; }
   </div>
 </div>
 
-<!-- LOAN MODAL -->
+<!-- ===== LOAN MODAL ===== -->
 <div class="modal-bg" id="loanModal">
   <div class="modal">
     <h3>Issue Loan</h3>
@@ -247,18 +429,26 @@ tr:hover td { background: #fafafa; }
     <div class="row">
       <div>
         <label>Amount (₹) *</label>
-        <input type="number" id="lAmt">
+        <input type="number" id="lAmt" oninput="calcEMI()">
       </div>
       <div>
         <label>Tenure (months) *</label>
-        <input type="number" id="lTenure" value="12">
+        <input type="number" id="lTenure" value="12" oninput="calcEMI()">
       </div>
     </div>
     <label>Interest Rate (%/month)</label>
     <input type="number" id="lRate" value="0.5" readonly>
+    
+    <div class="calc-preview" id="emiPreview">
+      <div class="calc-row"><span>Principal:</span><span id="prevPrincipal">₹0</span></div>
+      <div class="calc-row"><span>Interest @ 0.5%/m:</span><span id="prevInterest">₹0</span></div>
+      <div class="calc-row"><span>Total Repayable:</span><span id="prevTotal">₹0</span></div>
+      <div class="calc-row total"><span>Monthly EMI:</span><span id="prevEMI">₹0</span></div>
+    </div>
+    
     <div class="modal-buttons">
       <button class="btn btn-grey" onclick="closeLoanModal()">Cancel</button>
-      <button class="btn" onclick="saveLoan()">Save</button>
+      <button class="btn" onclick="saveLoan()">Issue Loan</button>
     </div>
   </div>
 </div>
@@ -268,7 +458,7 @@ tr:hover td { background: #fafafa; }
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAt6BCsUAbiBTklSiFyVaOxmojqMy-4ZeQ",
@@ -283,47 +473,116 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let editingMemberId = null;
-let user = null;
+// List of admin emails - users with these emails will see the admin panel
+const ADMIN_EMAILS = ['dadhikari77@gmail.com', 'mrabhilashpal@gmail.com', 'abhilashpal@outlook.com', 'admin@chitfund.in'];
 
-onAuthStateChanged(auth, (u) => {
-  if (u) {
-    user = u;
+let currentRole = 'admin';
+let currentUser = null;
+let currentMember = null;
+let editingId = null;
+
+// =============== ROLE & LOGIN ===============
+window.setRole = function(role) {
+  currentRole = role;
+  document.getElementById('adminTab').classList.toggle('active', role === 'admin');
+  document.getElementById('memberTab').classList.toggle('active', role === 'member');
+};
+
+window.doLogin = async function(e) {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+  document.getElementById('loginError').classList.remove('show');
+  
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    document.getElementById('loginError').textContent = '❌ Wrong email or password';
+    document.getElementById('loginError').classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+};
+
+window.doLogout = async function() {
+  if (confirm('Are you sure you want to logout?')) {
+    await signOut(auth);
+    location.reload();
+  }
+};
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+    
     document.getElementById('loginPage').style.display = 'none';
     document.getElementById('mainApp').classList.add('show');
-    document.getElementById('userInitials').textContent = u.email.substring(0, 2).toUpperCase();
-    document.getElementById('userEmail').textContent = u.email;
-    refreshDashboard();
+    document.getElementById('userInitials').textContent = user.email.substring(0, 2).toUpperCase();
+    document.getElementById('userEmail').textContent = user.email;
+    
+    if (isAdmin) {
+      // ADMIN MODE
+      document.getElementById('adminMenu').style.display = 'block';
+      document.getElementById('memberMenu').style.display = 'none';
+      document.getElementById('roleBadge').textContent = 'Administrator';
+      document.getElementById('roleBadge').classList.add('admin');
+      document.getElementById('userRoleText').textContent = 'Admin';
+      goPage('home', document.querySelector('#adminMenu .menu-item'));
+      refreshDashboard();
+    } else {
+      // MEMBER MODE
+      document.getElementById('adminMenu').style.display = 'none';
+      document.getElementById('memberMenu').style.display = 'block';
+      document.getElementById('roleBadge').textContent = 'Member';
+      document.getElementById('roleBadge').classList.remove('admin');
+      document.getElementById('userRoleText').textContent = 'Member';
+      
+      // Find member by email
+      try {
+        const q = query(collection(db, 'members'), where('email', '==', user.email.toLowerCase()));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          document.getElementById('memberName').textContent = 'Account Not Linked';
+          document.getElementById('memberIdShow').textContent = 'Please contact admin to add you as a member';
+        } else {
+          snap.forEach(d => {
+            currentMember = { id: d.id, ...d.data() };
+          });
+          loadMemberPassbook();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      
+      goPage('memberHome', document.querySelector('#memberMenu .menu-item'));
+    }
   } else {
     document.getElementById('loginPage').style.display = 'flex';
     document.getElementById('mainApp').classList.remove('show');
   }
 });
 
-window.doLogin = async function(e) {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (err) {
-    document.getElementById('loginError').textContent = 'Wrong email or password';
-    document.getElementById('loginError').classList.add('show');
-  }
-};
-
-window.doLogout = async function() {
-  if (confirm('Logout?')) await signOut(auth);
-};
-
-window.showPage = function(pageId, el) {
+window.goPage = function(pageId, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
   document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-  el.classList.add('active');
+  if (el) el.classList.add('active');
+  
+  // Admin pages
+  if (pageId === 'home') refreshDashboard();
   if (pageId === 'membersPage') loadMembers();
   if (pageId === 'contribsPage') loadContribs();
   if (pageId === 'loansPage') loadLoans();
+  if (pageId === 'reportsPage') loadReports();
+  
+  // Member pages
+  if (pageId === 'memberHome') loadMemberPassbook();
+  if (pageId === 'memberContribs') loadMyContribs();
+  if (pageId === 'memberLoan') loadMyLoan();
 };
 
 function toast(msg, error) {
@@ -333,67 +592,103 @@ function toast(msg, error) {
   setTimeout(() => t.className = 'toast', 3000);
 }
 
+// =============== ADMIN: DASHBOARD ===============
 async function refreshDashboard() {
   try {
-    const m = await getDocs(collection(db, 'members'));
+    const [m, c, l] = await Promise.all([
+      getDocs(collection(db, 'members')),
+      getDocs(collection(db, 'contributions')),
+      getDocs(collection(db, 'loans'))
+    ]);
+    
     document.getElementById('cMembers').textContent = m.size;
-    const c = await getDocs(collection(db, 'contributions'));
-    document.getElementById('cContribs').textContent = c.size;
-    let total = 0;
-    c.forEach(d => total += (d.data().amount || 0));
-    document.getElementById('cAmount').textContent = '₹' + total.toLocaleString();
-    const l = await getDocs(collection(db, 'loans'));
     document.getElementById('cLoans').textContent = l.size;
-  } catch (e) {
-    console.error('Dashboard error:', e);
-  }
+    
+    let totalContrib = 0;
+    c.forEach(d => totalContrib += (d.data().amount || 0));
+    document.getElementById('cAmount').textContent = '₹' + totalContrib.toLocaleString();
+    
+    let totalLoan = 0;
+    l.forEach(d => totalLoan += (d.data().outstanding || 0));
+    document.getElementById('cLoanAmt').textContent = '₹' + totalLoan.toLocaleString();
+    
+    // Recent activity
+    const activities = [];
+    c.forEach(d => {
+      const x = d.data();
+      activities.push({ type: 'contribution', name: x.memberName, amount: x.amount, date: x.date });
+    });
+    l.forEach(d => {
+      const x = d.data();
+      activities.push({ type: 'loan', name: x.memberName, amount: x.amount, date: x.createdAt });
+    });
+    activities.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    
+    const recentDiv = document.getElementById('recentActivity');
+    if (activities.length === 0) {
+      recentDiv.innerHTML = '<div class="empty">No activity yet</div>';
+    } else {
+      let html = '<table><tr><th>Type</th><th>Member</th><th>Amount</th><th>Date</th></tr>';
+      activities.slice(0, 5).forEach(a => {
+        html += `<tr>
+          <td><span class="badge ${a.type==='contribution'?'badge-green':'badge-blue'}">${a.type==='contribution'?'💵 Payment':'📋 Loan'}</span></td>
+          <td><b>${a.name}</b></td>
+          <td>₹${(a.amount || 0).toLocaleString()}</td>
+          <td>${a.date || '-'}</td>
+        </tr>`;
+      });
+      html += '</table>';
+      recentDiv.innerHTML = html;
+    }
+  } catch (e) { console.error(e); }
 }
 
-// MEMBERS
+// =============== ADMIN: MEMBERS ===============
 async function loadMembers() {
   const div = document.getElementById('membersList');
   try {
     const snap = await getDocs(collection(db, 'members'));
     if (snap.empty) {
-      div.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">No members yet. Click "Add Member" above.</p>';
+      div.innerHTML = '<div class="empty">📭 No members yet. Click "Add Member" to add your first member.</div>';
       return;
     }
-    let html = '<table><tr><th>Name</th><th>ID</th><th>Email</th><th>Phone</th><th>Amount</th><th>Actions</th></tr>';
+    let html = '<table><tr><th>Name</th><th>Member ID</th><th>Email</th><th>Phone</th><th>Monthly</th><th>Actions</th></tr>';
     snap.forEach(d => {
       const m = d.data();
       html += `<tr>
-        <td><b>${m.name}</b></td>
+        <td><b>${m.name || '-'}</b></td>
         <td>${m.memberId || '-'}</td>
         <td>${m.email || '-'}</td>
         <td>${m.phone || '-'}</td>
         <td>₹${m.monthlyAmount || 0}</td>
         <td>
-          <button class="btn btn-sm" onclick="editMember('${d.id}')">Edit</button>
+          <button class="btn btn-sm btn-blue" onclick="editMember('${d.id}')">Edit</button>
           <button class="btn btn-sm btn-red" onclick="delMember('${d.id}')">Delete</button>
         </td>
       </tr>`;
     });
     html += '</table>';
     div.innerHTML = html;
-    populateMemberSelects(snap);
+    populateSelects(snap);
   } catch (e) {
     console.error(e);
-    div.innerHTML = '<p style="color:red;padding:20px;">Error: ' + e.message + '</p>';
+    div.innerHTML = '<div class="empty" style="color:red;">Error: ' + e.message + '</div>';
   }
 }
 
-function populateMemberSelects(snap) {
+function populateSelects(snap) {
   const opts = ['<option value="">Select member...</option>'];
   snap.forEach(d => {
     const m = d.data();
-    opts.push(`<option value="${d.id}">${m.name}</option>`);
+    opts.push(`<option value="${d.id}">${m.name} (${m.memberId})</option>`);
   });
-  document.getElementById('cMember').innerHTML = opts.join('');
-  document.getElementById('lMember').innerHTML = opts.join('');
+  const html = opts.join('');
+  if (document.getElementById('cMember')) document.getElementById('cMember').innerHTML = html;
+  if (document.getElementById('lMember')) document.getElementById('lMember').innerHTML = html;
 }
 
 window.openMemberModal = function() {
-  editingMemberId = null;
+  editingId = null;
   document.getElementById('memberModalTitle').textContent = 'Add Member';
   document.getElementById('mName').value = '';
   document.getElementById('mId').value = '';
@@ -410,36 +705,36 @@ window.closeMemberModal = function() {
 window.saveMember = async function() {
   const name = document.getElementById('mName').value.trim();
   const memberId = document.getElementById('mId').value.trim();
-  const email = document.getElementById('mEmail').value.trim();
+  const email = document.getElementById('mEmail').value.trim().toLowerCase();
   const phone = document.getElementById('mPhone').value.trim();
   const amount = parseInt(document.getElementById('mAmount').value);
   
-  if (!name || !memberId) {
-    toast('Name and Member ID required', true);
+  if (!name || !memberId || !email) {
+    toast('Name, Member ID, and Email are required', true);
     return;
   }
   
   try {
     const data = { name, memberId, email, phone, monthlyAmount: amount };
-    if (editingMemberId) {
-      await updateDoc(doc(db, 'members', editingMemberId), data);
-      toast('Member updated!');
+    if (editingId) {
+      await updateDoc(doc(db, 'members', editingId), data);
+      toast('✅ Member updated!');
     } else {
       data.createdAt = new Date().toISOString();
       await addDoc(collection(db, 'members'), data);
-      toast('Member added!');
+      toast('✅ Member added! Tell them to login with this email.');
     }
     closeMemberModal();
     loadMembers();
     refreshDashboard();
   } catch (e) {
     console.error(e);
-    toast('Error: ' + e.message, true);
+    toast('❌ Error: ' + e.message, true);
   }
 };
 
 window.editMember = async function(id) {
-  editingMemberId = id;
+  editingId = id;
   const snap = await getDocs(collection(db, 'members'));
   snap.forEach(d => {
     if (d.id === id) {
@@ -456,43 +751,45 @@ window.editMember = async function(id) {
 };
 
 window.delMember = async function(id) {
-  if (!confirm('Delete this member?')) return;
+  if (!confirm('⚠️ Delete this member? This cannot be undone.')) return;
   try {
     await deleteDoc(doc(db, 'members', id));
-    toast('Member deleted!');
+    toast('✅ Member deleted!');
     loadMembers();
     refreshDashboard();
   } catch (e) {
-    toast('Error: ' + e.message, true);
+    toast('❌ Error: ' + e.message, true);
   }
 };
 
-// CONTRIBUTIONS
+// =============== ADMIN: CONTRIBUTIONS ===============
 async function loadContribs() {
   const div = document.getElementById('contribsList');
   try {
     await loadMembers();
     const snap = await getDocs(collection(db, 'contributions'));
     if (snap.empty) {
-      div.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">No contributions yet. Click "Record Payment" above.</p>';
+      div.innerHTML = '<div class="empty">📭 No contributions yet. Click "Record Payment" to add one.</div>';
       return;
     }
     let html = '<table><tr><th>Member</th><th>Amount</th><th>Date</th><th>Month</th><th>Actions</th></tr>';
-    snap.forEach(d => {
-      const c = d.data();
+    const sorted = [];
+    snap.forEach(d => sorted.push({ id: d.id, ...d.data() }));
+    sorted.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    sorted.forEach(c => {
       html += `<tr>
         <td><b>${c.memberName || '-'}</b></td>
-        <td>₹${c.amount || 0}</td>
+        <td>₹${(c.amount || 0).toLocaleString()}</td>
         <td>${c.date || '-'}</td>
         <td>${c.month || '-'}</td>
-        <td><button class="btn btn-sm btn-red" onclick="delContrib('${d.id}')">Delete</button></td>
+        <td><button class="btn btn-sm btn-red" onclick="delContrib('${c.id}')">Delete</button></td>
       </tr>`;
     });
     html += '</table>';
     div.innerHTML = html;
   } catch (e) {
     console.error(e);
-    div.innerHTML = '<p style="color:red;padding:20px;">Error: ' + e.message + '</p>';
+    div.innerHTML = '<div class="empty" style="color:red;">Error: ' + e.message + '</div>';
   }
 }
 
@@ -515,28 +812,31 @@ window.saveContrib = async function() {
   const month = document.getElementById('cMonth').value;
   
   if (!memberId || !amount || !date || !month) {
-    toast('Fill all fields', true);
+    toast('Please fill all fields', true);
     return;
   }
   
   try {
     const memSnap = await getDocs(collection(db, 'members'));
-    let memberName = '';
+    let memberName = '', memberEmail = '';
     memSnap.forEach(d => {
-      if (d.id === memberId) memberName = d.data().name;
+      if (d.id === memberId) {
+        memberName = d.data().name;
+        memberEmail = d.data().email;
+      }
     });
     
     await addDoc(collection(db, 'contributions'), {
-      memberId, memberName, amount, date, month,
+      memberId, memberName, memberEmail, amount, date, month,
       createdAt: new Date().toISOString()
     });
-    toast('Payment recorded!');
+    toast('✅ Payment recorded!');
     closeContribModal();
     loadContribs();
     refreshDashboard();
   } catch (e) {
     console.error(e);
-    toast('Error: ' + e.message, true);
+    toast('❌ Error: ' + e.message, true);
   }
 };
 
@@ -544,33 +844,34 @@ window.delContrib = async function(id) {
   if (!confirm('Delete this contribution?')) return;
   try {
     await deleteDoc(doc(db, 'contributions', id));
-    toast('Deleted!');
+    toast('✅ Deleted!');
     loadContribs();
     refreshDashboard();
   } catch (e) {
-    toast('Error: ' + e.message, true);
+    toast('❌ Error: ' + e.message, true);
   }
 };
 
-// LOANS
+// =============== ADMIN: LOANS ===============
 async function loadLoans() {
   const div = document.getElementById('loansList');
   try {
     await loadMembers();
     const snap = await getDocs(collection(db, 'loans'));
     if (snap.empty) {
-      div.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">No loans yet. Click "Issue Loan" above.</p>';
+      div.innerHTML = '<div class="empty">📭 No loans yet. Click "Issue Loan" to issue one.</div>';
       return;
     }
-    let html = '<table><tr><th>Member</th><th>Amount</th><th>Tenure</th><th>EMI</th><th>Outstanding</th><th>Actions</th></tr>';
+    let html = '<table><tr><th>Member</th><th>Amount</th><th>Tenure</th><th>EMI</th><th>Outstanding</th><th>Status</th><th>Actions</th></tr>';
     snap.forEach(d => {
       const l = d.data();
       html += `<tr>
         <td><b>${l.memberName || '-'}</b></td>
-        <td>₹${l.amount || 0}</td>
-        <td>${l.tenure || 0} months</td>
-        <td>₹${l.emi || 0}</td>
-        <td>₹${l.outstanding || 0}</td>
+        <td>₹${(l.amount || 0).toLocaleString()}</td>
+        <td>${l.tenure || 0}m</td>
+        <td>₹${(l.emi || 0).toLocaleString()}</td>
+        <td>₹${(l.outstanding || 0).toLocaleString()}</td>
+        <td><span class="badge ${l.status==='active'?'badge-amber':'badge-green'}">${l.status || 'active'}</span></td>
         <td><button class="btn btn-sm btn-red" onclick="delLoan('${d.id}')">Delete</button></td>
       </tr>`;
     });
@@ -578,7 +879,7 @@ async function loadLoans() {
     div.innerHTML = html;
   } catch (e) {
     console.error(e);
-    div.innerHTML = '<p style="color:red;padding:20px;">Error: ' + e.message + '</p>';
+    div.innerHTML = '<div class="empty" style="color:red;">Error: ' + e.message + '</div>';
   }
 }
 
@@ -586,6 +887,7 @@ window.openLoanModal = async function() {
   await loadMembers();
   document.getElementById('lAmt').value = '';
   document.getElementById('lTenure').value = '12';
+  document.getElementById('emiPreview').classList.remove('show');
   document.getElementById('loanModal').classList.add('show');
 };
 
@@ -593,39 +895,68 @@ window.closeLoanModal = function() {
   document.getElementById('loanModal').classList.remove('show');
 };
 
+window.calcEMI = function() {
+  const amt = parseInt(document.getElementById('lAmt').value) || 0;
+  const ten = parseInt(document.getElementById('lTenure').value) || 0;
+  const rate = 0.5;
+  
+  if (!amt || !ten) {
+    document.getElementById('emiPreview').classList.remove('show');
+    return;
+  }
+  
+  const interest = Math.round(amt * (rate / 100) * ten);
+  const total = amt + interest;
+  const emi = Math.round(total / ten);
+  
+  document.getElementById('prevPrincipal').textContent = '₹' + amt.toLocaleString();
+  document.getElementById('prevInterest').textContent = '₹' + interest.toLocaleString();
+  document.getElementById('prevTotal').textContent = '₹' + total.toLocaleString();
+  document.getElementById('prevEMI').textContent = '₹' + emi.toLocaleString();
+  document.getElementById('emiPreview').classList.add('show');
+};
+
 window.saveLoan = async function() {
   const memberId = document.getElementById('lMember').value;
   const amount = parseInt(document.getElementById('lAmt').value);
   const tenure = parseInt(document.getElementById('lTenure').value);
-  const rate = parseFloat(document.getElementById('lRate').value);
+  const rate = 0.5;
   
   if (!memberId || !amount || !tenure) {
-    toast('Fill all fields', true);
+    toast('Please fill all fields', true);
     return;
   }
   
   try {
     const memSnap = await getDocs(collection(db, 'members'));
-    let memberName = '';
+    let memberName = '', memberEmail = '';
     memSnap.forEach(d => {
-      if (d.id === memberId) memberName = d.data().name;
+      if (d.id === memberId) {
+        memberName = d.data().name;
+        memberEmail = d.data().email;
+      }
     });
     
-    const totalInterest = amount * (rate / 100) * tenure;
-    const emi = Math.round((amount + totalInterest) / tenure);
+    const interest = Math.round(amount * (rate / 100) * tenure);
+    const total = amount + interest;
+    const emi = Math.round(total / tenure);
     
     await addDoc(collection(db, 'loans'), {
-      memberId, memberName, amount, tenure, rate, emi,
-      outstanding: amount, status: 'active',
-      createdAt: new Date().toISOString()
+      memberId, memberName, memberEmail,
+      amount, tenure, rate, emi,
+      totalInterest: interest,
+      totalRepayable: total,
+      outstanding: total,
+      status: 'active',
+      createdAt: new Date().toISOString().split('T')[0]
     });
-    toast('Loan issued!');
+    toast('✅ Loan issued!');
     closeLoanModal();
     loadLoans();
     refreshDashboard();
   } catch (e) {
     console.error(e);
-    toast('Error: ' + e.message, true);
+    toast('❌ Error: ' + e.message, true);
   }
 };
 
@@ -633,13 +964,237 @@ window.delLoan = async function(id) {
   if (!confirm('Delete this loan?')) return;
   try {
     await deleteDoc(doc(db, 'loans', id));
-    toast('Deleted!');
+    toast('✅ Deleted!');
     loadLoans();
     refreshDashboard();
   } catch (e) {
-    toast('Error: ' + e.message, true);
+    toast('❌ Error: ' + e.message, true);
   }
 };
+
+// =============== ADMIN: REPORTS ===============
+async function loadReports() {
+  try {
+    const [m, c, l] = await Promise.all([
+      getDocs(collection(db, 'members')),
+      getDocs(collection(db, 'contributions')),
+      getDocs(collection(db, 'loans'))
+    ]);
+    
+    let totalContrib = 0, totalLoan = 0, totalInterest = 0;
+    c.forEach(d => totalContrib += (d.data().amount || 0));
+    l.forEach(d => {
+      totalLoan += (d.data().amount || 0);
+      totalInterest += (d.data().totalInterest || 0);
+    });
+    
+    document.getElementById('rTotalContribs').textContent = '₹' + totalContrib.toLocaleString();
+    document.getElementById('rTotalLoans').textContent = '₹' + totalLoan.toLocaleString();
+    document.getElementById('rInterest').textContent = '₹' + totalInterest.toLocaleString();
+    document.getElementById('rBalance').textContent = '₹' + (totalContrib - totalLoan).toLocaleString();
+    
+    // Member-wise summary
+    const summaryDiv = document.getElementById('memberSummary');
+    if (m.empty) {
+      summaryDiv.innerHTML = '<div class="empty">No members</div>';
+      return;
+    }
+    
+    const memberData = {};
+    m.forEach(d => {
+      memberData[d.id] = { ...d.data(), id: d.id, totalPaid: 0, contribCount: 0, hasLoan: false, loanOutstanding: 0 };
+    });
+    
+    c.forEach(d => {
+      const x = d.data();
+      if (memberData[x.memberId]) {
+        memberData[x.memberId].totalPaid += (x.amount || 0);
+        memberData[x.memberId].contribCount++;
+      }
+    });
+    
+    l.forEach(d => {
+      const x = d.data();
+      if (memberData[x.memberId]) {
+        memberData[x.memberId].hasLoan = true;
+        memberData[x.memberId].loanOutstanding += (x.outstanding || 0);
+      }
+    });
+    
+    let html = '<table><tr><th>Member</th><th>ID</th><th>Total Paid</th><th>Payments</th><th>Loan</th><th>Outstanding</th></tr>';
+    Object.values(memberData).forEach(mem => {
+      html += `<tr>
+        <td><b>${mem.name}</b></td>
+        <td>${mem.memberId}</td>
+        <td>₹${mem.totalPaid.toLocaleString()}</td>
+        <td>${mem.contribCount}</td>
+        <td>${mem.hasLoan ? '<span class="badge badge-amber">Yes</span>' : '<span class="badge badge-green">No</span>'}</td>
+        <td>₹${mem.loanOutstanding.toLocaleString()}</td>
+      </tr>`;
+    });
+    html += '</table>';
+    summaryDiv.innerHTML = html;
+  } catch (e) { console.error(e); }
+}
+
+// =============== MEMBER: PASSBOOK ===============
+async function loadMemberPassbook() {
+  if (!currentMember) {
+    if (currentUser) {
+      const q = query(collection(db, 'members'), where('email', '==', currentUser.email.toLowerCase()));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        document.getElementById('memberName').textContent = 'Account Not Linked';
+        document.getElementById('memberIdShow').textContent = 'Please ask admin to add you as a member';
+        return;
+      }
+      snap.forEach(d => currentMember = { id: d.id, ...d.data() });
+    } else return;
+  }
+  
+  document.getElementById('memberName').textContent = currentMember.name + "'s Passbook";
+  document.getElementById('memberIdShow').textContent = 'Member ID: ' + currentMember.memberId;
+  document.getElementById('myMonthly').textContent = '₹' + (currentMember.monthlyAmount || 2000).toLocaleString();
+  
+  // Load contributions
+  try {
+    const q = query(collection(db, 'contributions'), where('memberId', '==', currentMember.id));
+    const snap = await getDocs(q);
+    let total = 0;
+    let count = 0;
+    const recent = [];
+    snap.forEach(d => {
+      const x = d.data();
+      total += (x.amount || 0);
+      count++;
+      recent.push(x);
+    });
+    
+    document.getElementById('myTotalContrib').textContent = '₹' + total.toLocaleString();
+    document.getElementById('myContribCount').textContent = count + ' payments made';
+    
+    recent.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    
+    if (recent.length === 0) {
+      document.getElementById('myRecentTx').innerHTML = '<div class="empty">No transactions yet</div>';
+    } else {
+      let html = '<table><tr><th>Date</th><th>Month</th><th>Amount</th></tr>';
+      recent.slice(0, 5).forEach(c => {
+        html += `<tr><td>${c.date}</td><td>${c.month}</td><td><b>₹${c.amount.toLocaleString()}</b></td></tr>`;
+      });
+      html += '</table>';
+      document.getElementById('myRecentTx').innerHTML = html;
+    }
+    
+    // Loans
+    const lq = query(collection(db, 'loans'), where('memberId', '==', currentMember.id));
+    const lsnap = await getDocs(lq);
+    if (lsnap.empty) {
+      document.getElementById('myLoanStatus').textContent = 'None';
+      document.getElementById('myLoanOut').textContent = '₹0';
+    } else {
+      let totalOut = 0;
+      lsnap.forEach(d => totalOut += (d.data().outstanding || 0));
+      document.getElementById('myLoanStatus').textContent = 'Active';
+      document.getElementById('myLoanOut').textContent = '₹' + totalOut.toLocaleString();
+    }
+  } catch (e) { console.error(e); }
+}
+
+async function loadMyContribs() {
+  if (!currentMember) {
+    document.getElementById('myContribList').innerHTML = '<div class="empty">Account not linked. Please contact admin.</div>';
+    return;
+  }
+  try {
+    const q = query(collection(db, 'contributions'), where('memberId', '==', currentMember.id));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      document.getElementById('myContribList').innerHTML = '<div class="empty">📭 No contributions yet</div>';
+      return;
+    }
+    const arr = [];
+    snap.forEach(d => arr.push(d.data()));
+    arr.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    
+    let html = '<table><tr><th>#</th><th>Date</th><th>Month</th><th>Amount</th><th>Status</th></tr>';
+    arr.forEach((c, i) => {
+      html += `<tr>
+        <td>${i + 1}</td>
+        <td>${c.date}</td>
+        <td>${c.month}</td>
+        <td><b>₹${c.amount.toLocaleString()}</b></td>
+        <td><span class="badge badge-green">Paid ✓</span></td>
+      </tr>`;
+    });
+    html += '</table>';
+    document.getElementById('myContribList').innerHTML = html;
+  } catch (e) { console.error(e); }
+}
+
+async function loadMyLoan() {
+  if (!currentMember) {
+    document.getElementById('myLoanDetails').innerHTML = '<div class="empty">Account not linked. Please contact admin.</div>';
+    return;
+  }
+  try {
+    const q = query(collection(db, 'loans'), where('memberId', '==', currentMember.id));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      document.getElementById('myLoanDetails').innerHTML = `
+        <div class="box">
+          <div class="empty">
+            📋 You don't have any active loans.<br><br>
+            Contact the admin to apply for a loan.<br>
+            Interest rate: 0.5% per month
+          </div>
+        </div>`;
+      return;
+    }
+    
+    let html = '';
+    snap.forEach(d => {
+      const l = d.data();
+      html += `
+        <div class="passbook" style="background:linear-gradient(135deg,#c17817,#a06010);">
+          <div class="label">📋 Loan Amount</div>
+          <div class="value">₹${(l.amount || 0).toLocaleString()}</div>
+          <div class="sub">Issued on ${l.createdAt || '-'}</div>
+        </div>
+        <div class="cards">
+          <div class="stat">
+            <div class="stat-label">Interest Rate</div>
+            <div class="stat-value">${l.rate}%/m</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Tenure</div>
+            <div class="stat-value">${l.tenure}m</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Monthly EMI</div>
+            <div class="stat-value">₹${(l.emi || 0).toLocaleString()}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Outstanding</div>
+            <div class="stat-value">₹${(l.outstanding || 0).toLocaleString()}</div>
+          </div>
+        </div>
+        <div class="box">
+          <h3>📊 Loan Breakdown</h3>
+          <table>
+            <tr><td>Principal Amount:</td><td><b>₹${(l.amount || 0).toLocaleString()}</b></td></tr>
+            <tr><td>Total Interest:</td><td><b>₹${(l.totalInterest || 0).toLocaleString()}</b></td></tr>
+            <tr><td>Total Repayable:</td><td><b>₹${(l.totalRepayable || 0).toLocaleString()}</b></td></tr>
+            <tr><td>Monthly EMI:</td><td><b style="color:#0F6E56;">₹${(l.emi || 0).toLocaleString()}</b></td></tr>
+            <tr><td>Outstanding Balance:</td><td><b style="color:#c17817;">₹${(l.outstanding || 0).toLocaleString()}</b></td></tr>
+            <tr><td>Status:</td><td><span class="badge badge-amber">${l.status}</span></td></tr>
+          </table>
+        </div>
+      `;
+    });
+    document.getElementById('myLoanDetails').innerHTML = html;
+  } catch (e) { console.error(e); }
+}
 </script>
 </body>
 </html>
