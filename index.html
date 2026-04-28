@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChitFund Pro</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+body { background: #f5f5f7; color: #1d1d1f; }
+
+/* LOGIN */
+#loginPage { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea, #764ba2); padding: 20px; }
+.login-box { background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.login-box h1 { text-align: center; margin-bottom: 10px; font-size: 28px; }
+.login-box p { text-align: center; color: #888; margin-bottom: 30px; }
+.login-box input { width: 100%; padding: 14px; border: 2px solid #e5e5ea; border-radius: 10px; margin-bottom: 15px; font-size: 15px; }
+.login-box input:focus { outline: none; border-color: #1D9E75; }
+.login-box button { width: 100%; padding: 14px; background: #1D9E75; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+.login-box button:hover { background: #0F6E56; }
+.error { background: #fee; color: #c33; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: none; }
+.error.show { display: block; }
+
+/* MAIN APP */
+#mainApp { display: none; min-height: 100vh; }
+#mainApp.show { display: flex; }
+
+.sidebar { width: 250px; background: white; padding: 20px; border-right: 1px solid #e5e5ea; }
+.sidebar h2 { margin-bottom: 30px; color: #1D9E75; }
+.menu-item { padding: 12px 15px; border-radius: 10px; cursor: pointer; margin-bottom: 5px; font-weight: 600; }
+.menu-item:hover { background: #f5f5f7; }
+.menu-item.active { background: #e8f5f1; color: #0F6E56; }
+.user-box { margin-top: 30px; padding: 15px; background: #f5f5f7; border-radius: 10px; display: flex; align-items: center; gap: 10px; }
+.user-avatar { width: 40px; height: 40px; background: #667eea; color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.logout { margin-left: auto; cursor: pointer; font-size: 20px; }
+
+.content { flex: 1; padding: 30px; overflow-y: auto; }
+.page { display: none; }
+.page.active { display: block; }
+.page-title { display: flex; justify-content: space-between; margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
+.page-title h2 { font-size: 28px; }
+.btn { padding: 10px 20px; background: #1D9E75; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
+.btn:hover { background: #0F6E56; }
+.btn-sm { padding: 6px 12px; font-size: 12px; margin: 0 2px; }
+.btn-red { background: #e24b4a; }
+.btn-red:hover { background: #c33; }
+.btn-grey { background: #999; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+.stat { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.stat-label { color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+.stat-value { font-size: 30px; font-weight: bold; margin-top: 5px; }
+
+.box { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 12px; color: #888; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #f5f5f7; }
+td { padding: 12px; border-bottom: 1px solid #f5f5f7; }
+tr:hover td { background: #fafafa; }
+
+/* MODAL */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+.modal-bg.show { display: flex; }
+.modal { background: white; border-radius: 15px; padding: 25px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+.modal h3 { margin-bottom: 20px; }
+.modal label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+.modal input, .modal select { width: 100%; padding: 10px; border: 2px solid #e5e5ea; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
+.modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 10px; opacity: 0; transition: 0.3s; z-index: 9999; }
+.toast.show { opacity: 1; }
+.toast.error { background: #c33; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <div class="login-box">
+    <h1>💰 ChitFund Pro</h1>
+    <p>Community Savings Platform</p>
+    <div class="error" id="loginError"></div>
+    <form onsubmit="doLogin(event)">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Sign In</button>
+    </form>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp">
+  <div class="sidebar">
+    <h2>💰 ChitFund Pro</h2>
+    <div class="menu-item active" onclick="showPage('home', this)">📊 Dashboard</div>
+    <div class="menu-item" onclick="showPage('membersPage', this)">👥 Members</div>
+    <div class="menu-item" onclick="showPage('contribsPage', this)">💵 Contributions</div>
+    <div class="menu-item" onclick="showPage('loansPage', this)">📋 Loans</div>
+    <div class="user-box">
+      <div class="user-avatar" id="userInitials">U</div>
+      <div>
+        <div id="userEmail" style="font-size:13px;font-weight:bold;">user@email.com</div>
+        <div style="font-size:11px;color:#888;">Administrator</div>
+      </div>
+      <div class="logout" onclick="doLogout()" title="Logout">🚪</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- DASHBOARD -->
+    <div class="page active" id="home">
+      <div class="page-title">
+        <h2>Dashboard</h2>
+      </div>
+      <div class="cards">
+        <div class="stat">
+          <div class="stat-label">Members</div>
+          <div class="stat-value" id="cMembers">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Contributions</div>
+          <div class="stat-value" id="cContribs">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Total Amount</div>
+          <div class="stat-value" id="cAmount">₹0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Active Loans</div>
+          <div class="stat-value" id="cLoans">0</div>
+        </div>
+      </div>
+      <div class="box">
+        <h3>✅ Welcome to ChitFund Pro</h3>
+        <p style="margin-top:10px;color:#666;line-height:1.8;">
+          • Click "Members" to add new members<br>
+          • Click "Contributions" to record payments<br>
+          • Click "Loans" to issue loans<br>
+          • All data is saved to your Firebase database in real-time
+        </p>
+      </div>
+    </div>
+
+    <!-- MEMBERS PAGE -->
+    <div class="page" id="membersPage">
+      <div class="page-title">
+        <h2>Members</h2>
+        <button class="btn" onclick="openMemberModal()">➕ Add Member</button>
+      </div>
+      <div class="box">
+        <div id="membersList">Loading...</div>
+      </div>
+    </div>
+
+    <!-- CONTRIBUTIONS PAGE -->
+    <div class="page" id="contribsPage">
+      <div class="page-title">
+        <h2>Contributions</h2>
+        <button class="btn" onclick="openContribModal()">➕ Record Payment</button>
+      </div>
+      <div class="box">
+        <div id="contribsList">Loading...</div>
+      </div>
+    </div>
+
+    <!-- LOANS PAGE -->
+    <div class="page" id="loansPage">
+      <div class="page-title">
+        <h2>Loans</h2>
+        <button class="btn" onclick="openLoanModal()">➕ Issue Loan</button>
+      </div>
+      <div class="box">
+        <div id="loansList">Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MEMBER MODAL -->
+<div class="modal-bg" id="memberModal">
+  <div class="modal">
+    <h3 id="memberModalTitle">Add Member</h3>
+    <div class="row">
+      <div>
+        <label>Name *</label>
+        <input type="text" id="mName">
+      </div>
+      <div>
+        <label>Member ID *</label>
+        <input type="text" id="mId">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Email</label>
+        <input type="email" id="mEmail">
+      </div>
+      <div>
+        <label>Phone</label>
+        <input type="text" id="mPhone">
+      </div>
+    </div>
+    <label>Monthly Amount (₹)</label>
+    <input type="number" id="mAmount" value="2000">
+    <div class="modal-buttons">
+      <button class="btn btn-grey" onclick="closeMemberModal()">Cancel</button>
+      <button class="btn" onclick="saveMember()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTRIBUTION MODAL -->
+<div class="modal-bg" id="contribModal">
+  <div class="modal">
+    <h3>Record Payment</h3>
+    <label>Member *</label>
+    <select id="cMember"></select>
+    <div class="row">
+      <div>
+        <label>Amount (₹) *</label>
+        <input type="number" id="cAmt" value="2000">
+      </div>
+      <div>
+        <label>Date *</label>
+        <input type="date" id="cDate">
+      </div>
+    </div>
+    <label>Month *</label>
+    <input type="month" id="cMonth">
+    <div class="modal-buttons">
+      <button class="btn btn-grey" onclick="closeContribModal()">Cancel</button>
+      <button class="btn" onclick="saveContrib()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOAN MODAL -->
+<div class="modal-bg" id="loanModal">
+  <div class="modal">
+    <h3>Issue Loan</h3>
+    <label>Member *</label>
+    <select id="lMember"></select>
+    <div class="row">
+      <div>
+        <label>Amount (₹) *</label>
+        <input type="number" id="lAmt">
+      </div>
+      <div>
+        <label>Tenure (months) *</label>
+        <input type="number" id="lTenure" value="12">
+      </div>
+    </div>
+    <label>Interest Rate (%/month)</label>
+    <input type="number" id="lRate" value="0.5" readonly>
+    <div class="modal-buttons">
+      <button class="btn btn-grey" onclick="closeLoanModal()">Cancel</button>
+      <button class="btn" onclick="saveLoan()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAt6BCsUAbiBTklSiFyVaOxmojqMy-4ZeQ",
+  authDomain: "abhilash-52bee.firebaseapp.com",
+  projectId: "abhilash-52bee",
+  storageBucket: "abhilash-52bee.firebasestorage.app",
+  messagingSenderId: "993199610268",
+  appId: "1:993199610268:web:44f1b6fc67d0ed67869059"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let editingMemberId = null;
+let user = null;
+
+onAuthStateChanged(auth, (u) => {
+  if (u) {
+    user = u;
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('mainApp').classList.add('show');
+    document.getElementById('userInitials').textContent = u.email.substring(0, 2).toUpperCase();
+    document.getElementById('userEmail').textContent = u.email;
+    refreshDashboard();
+  } else {
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('mainApp').classList.remove('show');
+  }
+});
+
+window.doLogin = async function(e) {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    document.getElementById('loginError').textContent = 'Wrong email or password';
+    document.getElementById('loginError').classList.add('show');
+  }
+};
+
+window.doLogout = async function() {
+  if (confirm('Logout?')) await signOut(auth);
+};
+
+window.showPage = function(pageId, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+  el.classList.add('active');
+  if (pageId === 'membersPage') loadMembers();
+  if (pageId === 'contribsPage') loadContribs();
+  if (pageId === 'loansPage') loadLoans();
+};
+
+function toast(msg, error) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = error ? 'toast error show' : 'toast show';
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+async function refreshDashboard() {
+  try {
+    const m = await getDocs(collection(db, 'members'));
+    document.getElementById('cMembers').textContent = m.size;
+    const c = await getDocs(collection(db, 'contributions'));
+    document.getElementById('cContribs').textContent = c.size;
+    let total = 0;
+    c.forEach(d => total += (d.data().amount || 0));
+    document.getElementById('cAmount').textContent = '₹' + total.toLocaleString();
+    const l = await getDocs(collection(db, 'loans'));
+    document.getElementById('cLoans').textContent = l.size;
+  } catch (e) {
+    console.error('Dashboard error:', e);
+  }
+}
+
+// MEMBERS
+async function loadMembers() {
+  const div = document.getElementById('membersList');
+  try {
+    const snap = await getDocs(collection(db, 'members'));
+    if (snap.empty) {
+      div.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">No members yet. Click "Add Member" above.</p>';
+      return;
+    }
+    let html = '<table><tr><th>Name</th><th>ID</th><th>Email</th><th>Phone</th><th>Amount</th><th>Actions</th></tr>';
+    snap.forEach(d => {
+      const m = d.data();
+      html += `<tr>
+        <td><b>${m.name}</b></td>
+        <td>${m.memberId || '-'}</td>
+        <td>${m.email || '-'}</td>
+        <td>${m.phone || '-'}</td>
+        <td>₹${m.monthlyAmount || 0}</td>
+        <td>
+          <button class="btn btn-sm" onclick="editMember('${d.id}')">Edit</button>
+          <button class="btn btn-sm btn-red" onclick="delMember('${d.id}')">Delete</button>
+        </td>
+      </tr>`;
+    });
+    html += '</table>';
+    div.innerHTML = html;
+    populateMemberSelects(snap);
+  } catch (e) {
+    console.error(e);
+    div.innerHTML = '<p style="color:red;padding:20px;">Error: ' + e.message + '</p>';
+  }
+}
+
+function populateMemberSelects(snap) {
+  const opts = ['<option value="">Select member...</option>'];
+  snap.forEach(d => {
+    const m = d.data();
+    opts.push(`<option value="${d.id}">${m.name}</option>`);
+  });
+  document.getElementById('cMember').innerHTML = opts.join('');
+  document.getElementById('lMember').innerHTML = opts.join('');
+}
+
+window.openMemberModal = function() {
+  editingMemberId = null;
+  document.getElementById('memberModalTitle').textContent = 'Add Member';
+  document.getElementById('mName').value = '';
+  document.getElementById('mId').value = '';
+  document.getElementById('mEmail').value = '';
+  document.getElementById('mPhone').value = '';
+  document.getElementById('mAmount').value = '2000';
+  document.getElementById('memberModal').classList.add('show');
+};
+
+window.closeMemberModal = function() {
+  document.getElementById('memberModal').classList.remove('show');
+};
+
+window.saveMember = async function() {
+  const name = document.getElementById('mName').value.trim();
+  const memberId = document.getElementById('mId').value.trim();
+  const email = document.getElementById('mEmail').value.trim();
+  const phone = document.getElementById('mPhone').value.trim();
+  const amount = parseInt(document.getElementById('mAmount').value);
+  
+  if (!name || !memberId) {
+    toast('Name and Member ID required', true);
+    return;
+  }
+  
+  try {
+    const data = { name, memberId, email, phone, monthlyAmount: amount };
+    if (editingMemberId) {
+      await updateDoc(doc(db, 'members', editingMemberId), data);
+      toast('Member updated!');
+    } else {
+      data.createdAt = new Date().toISOString();
+      await addDoc(collection(db, 'members'), data);
+      toast('Member added!');
+    }
+    closeMemberModal();
+    loadMembers();
+    refreshDashboard();
+  } catch (e) {
+    console.error(e);
+    toast('Error: ' + e.message, true);
+  }
+};
+
+window.editMember = async function(id) {
+  editingMemberId = id;
+  const snap = await getDocs(collection(db, 'members'));
+  snap.forEach(d => {
+    if (d.id === id) {
+      const m = d.data();
+      document.getElementById('memberModalTitle').textContent = 'Edit Member';
+      document.getElementById('mName').value = m.name || '';
+      document.getElementById('mId').value = m.memberId || '';
+      document.getElementById('mEmail').value = m.email || '';
+      document.getElementById('mPhone').value = m.phone || '';
+      document.getElementById('mAmount').value = m.monthlyAmount || 2000;
+      document.getElementById('memberModal').classList.add('show');
+    }
+  });
+};
+
+window.delMember = async function(id) {
+  if (!confirm('Delete this member?')) return;
+  try {
+    await deleteDoc(doc(db, 'members', id));
+    toast('Member deleted!');
+    loadMembers();
+    refreshDashboard();
+  } catch (e) {
+    toast('Error: ' + e.message, true);
+  }
+};
+
+// CONTRIBUTIONS
+async function loadContribs() {
+  const div = document.getElementById('contribsList');
+  try {
+    await loadMembers();
+    const snap = await getDocs(collection(db, 'contributions'));
+    if (snap.empty) {
+      div.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">No contributions yet. Click "Record Payment" above.</p>';
+      return;
+    }
+    let html = '<table><tr><th>Member</th><th>Amount</th><th>Date</th><th>Month</th><th>Actions</th></tr>';
+    snap.forEach(d => {
+      const c = d.data();
+      html += `<tr>
+        <td><b>${c.memberName || '-'}</b></td>
+        <td>₹${c.amount || 0}</td>
+        <td>${c.date || '-'}</td>
+        <td>${c.month || '-'}</td>
+        <td><button class="btn btn-sm btn-red" onclick="delContrib('${d.id}')">Delete</button></td>
+      </tr>`;
+    });
+    html += '</table>';
+    div.innerHTML = html;
+  } catch (e) {
+    console.error(e);
+    div.innerHTML = '<p style="color:red;padding:20px;">Error: ' + e.message + '</p>';
+  }
+}
+
+window.openContribModal = async function() {
+  await loadMembers();
+  document.getElementById('cAmt').value = '2000';
+  document.getElementById('cDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('cMonth').value = new Date().toISOString().slice(0, 7);
+  document.getElementById('contribModal').classList.add('show');
+};
+
+window.closeContribModal = function() {
+  document.getElementById('contribModal').classList.remove('show');
+};
+
+window.saveContrib = async function() {
+  const memberId = document.getElementById('cMember').value;
+  const amount = parseInt(document.getElementById('cAmt').value);
+  const date = document.getElementById('cDate').value;
+  const month = document.getElementById('cMonth').value;
+  
+  if (!memberId || !amount || !date || !month) {
+    toast('Fill all fields', true);
+    return;
+  }
+  
+  try {
+    const memSnap = await getDocs(collection(db, 'members'));
+    let memberName = '';
+    memSnap.forEach(d => {
+      if (d.id === memberId) memberName = d.data().name;
+    });
+    
+    await addDoc(collection(db, 'contributions'), {
+      memberId, memberName, amount, date, month,
+      createdAt: new Date().toISOString()
+    });
+    toast('Payment recorded!');
+    closeContribModal();
+    loadContribs();
+    refreshDashboard();
+  } catch (e) {
+    console.error(e);
+    toast('Error: ' + e.message, true);
+  }
+};
+
+window.delContrib = async function(id) {
+  if (!confirm('Delete this contribution?')) return;
+  try {
+    await deleteDoc(doc(db, 'contributions', id));
+    toast('Deleted!');
+    loadContribs();
+    refreshDashboard();
+  } catch (e) {
+    toast('Error: ' + e.message, true);
+  }
+};
+
+// LOANS
+async function loadLoans() {
+  const div = document.getElementById('loansList');
+  try {
+    await loadMembers();
+    const snap = await getDocs(collection(db, 'loans'));
+    if (snap.empty) {
+      div.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">No loans yet. Click "Issue Loan" above.</p>';
+      return;
+    }
+    let html = '<table><tr><th>Member</th><th>Amount</th><th>Tenure</th><th>EMI</th><th>Outstanding</th><th>Actions</th></tr>';
+    snap.forEach(d => {
+      const l = d.data();
+      html += `<tr>
+        <td><b>${l.memberName || '-'}</b></td>
+        <td>₹${l.amount || 0}</td>
+        <td>${l.tenure || 0} months</td>
+        <td>₹${l.emi || 0}</td>
+        <td>₹${l.outstanding || 0}</td>
+        <td><button class="btn btn-sm btn-red" onclick="delLoan('${d.id}')">Delete</button></td>
+      </tr>`;
+    });
+    html += '</table>';
+    div.innerHTML = html;
+  } catch (e) {
+    console.error(e);
+    div.innerHTML = '<p style="color:red;padding:20px;">Error: ' + e.message + '</p>';
+  }
+}
+
+window.openLoanModal = async function() {
+  await loadMembers();
+  document.getElementById('lAmt').value = '';
+  document.getElementById('lTenure').value = '12';
+  document.getElementById('loanModal').classList.add('show');
+};
+
+window.closeLoanModal = function() {
+  document.getElementById('loanModal').classList.remove('show');
+};
+
+window.saveLoan = async function() {
+  const memberId = document.getElementById('lMember').value;
+  const amount = parseInt(document.getElementById('lAmt').value);
+  const tenure = parseInt(document.getElementById('lTenure').value);
+  const rate = parseFloat(document.getElementById('lRate').value);
+  
+  if (!memberId || !amount || !tenure) {
+    toast('Fill all fields', true);
+    return;
+  }
+  
+  try {
+    const memSnap = await getDocs(collection(db, 'members'));
+    let memberName = '';
+    memSnap.forEach(d => {
+      if (d.id === memberId) memberName = d.data().name;
+    });
+    
+    const totalInterest = amount * (rate / 100) * tenure;
+    const emi = Math.round((amount + totalInterest) / tenure);
+    
+    await addDoc(collection(db, 'loans'), {
+      memberId, memberName, amount, tenure, rate, emi,
+      outstanding: amount, status: 'active',
+      createdAt: new Date().toISOString()
+    });
+    toast('Loan issued!');
+    closeLoanModal();
+    loadLoans();
+    refreshDashboard();
+  } catch (e) {
+    console.error(e);
+    toast('Error: ' + e.message, true);
+  }
+};
+
+window.delLoan = async function(id) {
+  if (!confirm('Delete this loan?')) return;
+  try {
+    await deleteDoc(doc(db, 'loans', id));
+    toast('Deleted!');
+    loadLoans();
+    refreshDashboard();
+  } catch (e) {
+    toast('Error: ' + e.message, true);
+  }
+};
+</script>
+</body>
+</html>
